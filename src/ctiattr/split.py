@@ -37,10 +37,32 @@ def make_split() -> dict:
 
 
 def load_split() -> dict:
-    return json.loads(SPLIT_FILE.read_text())
+    split = json.loads(SPLIT_FILE.read_text())
+    if MINI_FILE.exists():
+        split["mini20"] = json.loads(MINI_FILE.read_text())["ids"]
+    return split
+
+
+MINI_FILE = SPLITS / "mini20.json"
+MINI_PER_TASK = 10
+
+
+def make_mini() -> dict:
+    """20-question quick-look subset of dev: 10 ATA + 10 VCA, fixed seed."""
+    dev = set(load_split()["dev"])
+    rng = random.Random(SEED)
+    ids = []
+    for task in ("ata", "vca"):
+        pool = sorted(i for i in dev if i.startswith(task))
+        ids += sorted(rng.sample(pool, MINI_PER_TASK))
+    return {"seed": SEED, "source": "dev", "ids": ids}
 
 
 def main() -> None:
+    if not MINI_FILE.exists() and SPLIT_FILE.exists():
+        MINI_FILE.write_text(json.dumps(make_mini(), indent=1) + "\n")
+        print(f"wrote {MINI_FILE}")
+        return
     if SPLIT_FILE.exists():
         raise SystemExit(f"{SPLIT_FILE} already exists; the split is frozen")
     split = make_split()

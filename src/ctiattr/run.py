@@ -46,7 +46,7 @@ def main(argv=None) -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--method", choices=sorted(METHODS), required=True)
     ap.add_argument("--model", default=None, help="answering model (default: LLM_MODEL)")
-    ap.add_argument("--subset", choices=["all", "dev", "test"], default="dev")
+    ap.add_argument("--subset", choices=["all", "dev", "test", "mini20"], default="dev")
     ap.add_argument("--tasks", nargs="+", default=list(TASKS), choices=TASKS)
     ap.add_argument("--limit", type=int, default=None, help="first N questions per task")
     ap.add_argument("--k", type=int, default=5)
