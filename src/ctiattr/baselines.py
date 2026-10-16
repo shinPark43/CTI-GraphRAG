@@ -97,4 +97,67 @@ def dtr(qa: QA, ctx: dict) -> tuple[str, dict]:
     }
 
 
-METHODS = {"closed_book": closed_book, "vanilla_rag": vanilla_rag, "dtr": dtr}
+# --- decompose-then-retrieve, as described in the paper -------------------
+#
+# CTIConnect §4.1: DtR "decomposes the input passage into N atomic behaviors,
+# canonicalizes each into taxonomy-aligned vocabulary, and performs
+# independent retrieval per behavior before aggregation". The released code
+# (`dtr` above) skips the canonicalization step and the paper publishes no
+# prompts, so DTR_CANONICALIZE is ours. Decomposition and aggregation reuse
+# the released prompts unchanged; only the retrieval query differs.
+
+_TAXONOMY = {
+    "ata": ("MITRE ATT&CK Enterprise techniques", "technique"),
+    "vca": ("MITRE CWE (Common Weakness Enumeration) weaknesses", "weakness"),
+}
+
+DTR_CANONICALIZE = """You are a CTI analyst. Rewrite the behavior below in the vocabulary of
+{taxonomy}: give the name of the {unit} it most likely corresponds to, followed
+by a one-sentence description written in that taxonomy's own terminology. Do not
+output identifiers. Output a single line and nothing else.
+
+Behavior: {behavior}
+
+Rewritten behavior:"""
+
+
+def _first_content_line(text: str) -> str:
+    """First line of a reply, skipping a lead-in header such as 'Here is…:'."""
+    lines = [ln.strip().lstrip("-*• \t") for ln in text.splitlines() if ln.strip()]
+    for ln in lines:
+        if not ln.endswith(":"):
+            return ln
+    return ""
+
+
+def dtr_paper(qa: QA, ctx: dict) -> tuple[str, dict]:
+    llm, kind = ctx["llm"], TASK_KB[qa.task]
+    dec = llm.chat(DTR_DECOMPOSE.format(question=qa.question), max_tokens=256)
+    behaviors = [b.strip("-* \t") for b in dec.output.splitlines() if b.strip()][:5]
+    if not behaviors:
+        behaviors = [qa.question]
+    taxonomy, unit = _TAXONOMY[qa.task]
+    can_calls, queries = [], []
+    for b in behaviors:  # one call per behavior, so rewrites cannot misalign
+        can = llm.chat(DTR_CANONICALIZE.format(taxonomy=taxonomy, unit=unit, behavior=b),
+                       max_tokens=150)
+        can_calls.append(can.to_dict())
+        queries.append(_first_content_line(can.output) or b)
+    blocks, retrieved = [], []
+    for b, q in zip(behaviors, queries):
+        hits = ctx["retriever"].retrieve(q, kind, k=ctx["k"])
+        retrieved.append([h.doc_id for h in hits])
+        blocks.append(f"Behavior: {b}\nCandidates:\n{format_candidates(hits, max_chars=300)}")
+    val = llm.chat(DTR_VALIDATE.format(question=qa.question,
+                                       behavior_blocks="\n\n---\n\n".join(blocks)),
+                   system=DTR_SYSTEM, max_tokens=700)
+    return val.output, {
+        "behaviors": behaviors,
+        "canonical": queries,
+        "retrieved": retrieved,
+        "calls": [dec.to_dict(), *can_calls, val.to_dict()],
+    }
+
+
+METHODS = {"closed_book": closed_book, "vanilla_rag": vanilla_rag, "dtr": dtr,
+           "dtr_paper": dtr_paper}
