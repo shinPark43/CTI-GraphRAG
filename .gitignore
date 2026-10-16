@@ -1,0 +1,17 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# downloaded / derived data (re-create with scripts/fetch_cticonnect.py)
+data/raw/
+.cache/
+
+# experiment outputs
+runs/
+
+.DS_Store
