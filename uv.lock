@@ -45,6 +45,7 @@ dependencies = [
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.5.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "openai" },
+    { name = "pydantic" },
     { name = "python-dotenv" },
 ]
 
@@ -57,6 +58,7 @@ dev = [
 requires-dist = [
     { name = "numpy", specifier = ">=1.26" },
     { name = "openai", specifier = ">=1.40" },
+    { name = "pydantic", specifier = ">=2.6" },
     { name = "python-dotenv", specifier = ">=1.0" },
 ]
 

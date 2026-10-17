@@ -80,7 +80,11 @@ def load_reports() -> dict[str, str]:
 
 
 def chunk_report(report_id: str, text: str, lo: int = 200, hi: int = 900) -> list[Chunk]:
-    """Pack whole clauses into chunks of lo-hi characters; never split a clause."""
+    """Pack whole clauses into chunks of lo-hi characters; never split a clause.
+
+    A single clause longer than `hi` stays whole (the longest chunk in the
+    corpus is 1,150 characters), and a report shorter than `lo` is one chunk.
+    """
     spans, pos = [], 0
     for piece in _CLAUSE.split(text):
         if not piece:
