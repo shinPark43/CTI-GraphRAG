@@ -22,7 +22,7 @@ import argparse
 import asyncio
 import json
 
-from openai import AsyncOpenAI, OpenAI
+from openai import AsyncOpenAI
 from ragas.embeddings.base import embedding_factory
 from ragas.llms import llm_factory
 from ragas.metrics.collections import AnswerRelevancy, ContextRecall, Faithfulness
@@ -78,7 +78,7 @@ def reasoning_client(key: str) -> AsyncOpenAI:
 
 async def score_all(samples: list[dict], judge: str, emb_model: str, key: str, concurrency: int = 4) -> list[dict]:
     llm = llm_factory(judge, client=reasoning_client(key))
-    emb = embedding_factory("openai", model=emb_model, client=OpenAI(api_key=key))
+    emb = embedding_factory("openai", model=emb_model, client=AsyncOpenAI(api_key=key))  # ascore needs async
     scorers = {"faithfulness": Faithfulness(llm=llm),
                "answer_relevancy": AnswerRelevancy(llm=llm, embeddings=emb),
                "context_recall": ContextRecall(llm=llm)}
@@ -88,6 +88,8 @@ async def score_all(samples: list[dict], judge: str, emb_model: str, key: str, c
         async with sem:
             out = {}
             for name, scorer in scorers.items():
+                if s.get(name) is not None:  # --rescore: keep metrics that already succeeded
+                    continue
                 kw = {"user_input": s["user_input"]}
                 if name != "context_recall":
                     kw["response"] = s["response"]
@@ -97,6 +99,7 @@ async def score_all(samples: list[dict], judge: str, emb_model: str, key: str, c
                     kw["reference"] = s["reference"]
                 try:
                     out[name] = float((await scorer.ascore(**kw)).value)
+                    out[f"{name}_error"] = None
                 except Exception as e:  # noqa: BLE001 - record, do not drop the sample
                     out[name] = None
                     out[f"{name}_error"] = f"{type(e).__name__}: {e}"[:200]
@@ -111,8 +114,20 @@ def main() -> None:
     ap.add_argument("--judge", default="gpt-5.4-mini-2026-03-17")
     ap.add_argument("--sgs-run", default="dev__sgs__llama3-8b-fp16")
     ap.add_argument("--vr-run", default="dev__vanilla_rag__llama3-8b-fp16")
+    ap.add_argument("--rescore", action="store_true",
+                    help="re-score only failed metrics in runs/ragas__mini20.jsonl (same responses)")
     args = ap.parse_args()
+    out = RUNS / "ragas__mini20.jsonl"
+    emb_cfg = EmbedConfig.from_env()
 
+    if args.rescore:
+        samples = [json.loads(l) for l in out.open()]
+    else:
+        samples = build_samples(args, emb_cfg)
+    report(asyncio.run(score_all(samples, args.judge, emb_cfg.model, emb_cfg.api_key)), args.judge, out)
+
+
+def build_samples(args, emb_cfg) -> list[dict]:
     ids = load_split()["mini20"]
     qa = {q.id: q for q in load_all()}
     ref = references()
@@ -120,7 +135,6 @@ def main() -> None:
     vr_runs = {json.loads(l)["id"]: json.loads(l) for l in (RUNS / args.vr_run / "predictions.jsonl").open()}
     kb = {kind: {e.doc_id.upper(): e for e in load_kb(kind)} for kind in ("mitre", "cwe")}
 
-    emb_cfg = EmbedConfig.from_env()
     sgs = SGS(Embedder(emb_cfg))
     llm = ChatLLM(LLMConfig.from_env(args.model))
 
@@ -144,12 +158,12 @@ def main() -> None:
                         "retrieved_contexts": format_candidates(hits).split("\n\n"),
                         "response": v["prediction"], "reference": ref[i]})
     print(f"explanations generated for {len(ids)} queries; official F1 unchanged by the explanation step")
+    return samples
 
-    scored = asyncio.run(score_all(samples, args.judge, emb_cfg.model, emb_cfg.api_key))
-    out = RUNS / "ragas__mini20.jsonl"
+
+def report(scored: list[dict], judge: str, out) -> None:
     out.write_text("".join(json.dumps(s) + "\n" for s in scored))
-
-    print(f"\nRAGAS on the 20 eval queries (judge {args.judge})")
+    print(f"\nRAGAS on the 20 eval queries (judge {judge})")
     print(f"{'system':8}{'task':6}{'n':>3} {'F1':>6} " + " ".join(f"{m:>17}" for m in METRICS))
     for system in ("VR", "SGS"):
         for task in ("ata", "vca", "all"):
