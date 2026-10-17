@@ -159,5 +159,10 @@ def dtr_paper(qa: QA, ctx: dict) -> tuple[str, dict]:
     }
 
 
+def sgs(qa: QA, ctx: dict) -> tuple[str, dict]:
+    """Snapshot-Guided Selection (ctiattr.sgs); ctx["sgs"] holds the built SGS instance."""
+    return ctx["sgs"].answer(ctx["llm"], qa)
+
+
 METHODS = {"closed_book": closed_book, "vanilla_rag": vanilla_rag, "dtr": dtr,
-           "dtr_paper": dtr_paper}
+           "dtr_paper": dtr_paper, "sgs": sgs}

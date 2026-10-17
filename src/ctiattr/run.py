@@ -72,7 +72,10 @@ def main(argv=None) -> None:
     print(f"[{name}] {len(qas)} questions, {len(done)} already done, {len(todo)} to run")
 
     ctx = {"llm": ChatLLM(llm_cfg), "k": args.k}
-    if args.method != "closed_book":
+    if args.method == "sgs":
+        from ctiattr.sgs import SGS  # builds its own indexes up front
+        ctx["sgs"] = SGS(Embedder(EmbedConfig.from_env()))
+    elif args.method != "closed_book":
         ctx["retriever"] = Retriever(Embedder(EmbedConfig.from_env()))
         for t in args.tasks:  # build indexes up front, not inside worker threads
             ctx["retriever"].index(TASK_KB[t])
