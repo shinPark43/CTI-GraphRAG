@@ -13,24 +13,15 @@ KDD '26). Only the dev split is used, so the frozen test split stays unseen.
 from __future__ import annotations
 
 import json
-import re
 
 from ctiattr.config import RAW, ROOT
-from ctiattr.data import load_all, load_kb
+from ctiattr.data import load_all, load_kb, passage
 from ctiattr.split import load_split
 
 PREDICATE = {"ata": "DESCRIBES_TECHNIQUE", "vca": "DESCRIBES_WEAKNESS"}
 TARGET_TYPE = {"ata": "AttackTechnique", "vca": "CWE"}
 SOURCE = ("CTIConnect (Cheng et al., KDD '26), commit 554797d, CC-BY-4.0; "
           "https://github.com/peng-gao-lab/CTIConnect")
-
-_QUOTE = re.compile(r"""security blog:\s*["'“‘](.+?)["'”’][.,;]?\s*(?:Please|Which|Could|Can|What|Identify|$)""",
-                    re.S)
-
-
-def passage(question: str) -> str:
-    m = _QUOTE.search(question)
-    return m.group(1).strip() if m else question
 
 
 def main() -> None:

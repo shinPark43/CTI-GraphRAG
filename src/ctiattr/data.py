@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -28,6 +29,20 @@ class QA:
     @property
     def gold(self) -> list[str]:
         return [g.upper() for g in self.ground_truth["target_ids"]]
+
+    @property
+    def passage(self) -> str:
+        return passage(self.question)
+
+
+_QUOTE = re.compile(r"""security blog:\s*["'“‘](.+?)["'”’][.,;]?\s*(?:Please|Which|Could|Can|What|Identify|$)""",
+                    re.S)
+
+
+def passage(question: str) -> str:
+    """The quoted report passage inside a CTIConnect question (the question itself if none)."""
+    m = _QUOTE.search(question)
+    return m.group(1).strip() if m else question
 
 
 @dataclass(frozen=True)
