@@ -1,0 +1,12 @@
+{
+ "model": "gpt-5.4-mini-2026-03-17",
+ "chunks": 650,
+ "extracted": 3741,
+ "kept": 3512,
+ "dropped": {
+  "unknown_id": 6,
+  "not_verbatim": 223
+ },
+ "dev_ata_exact_coverage": "29/30",
+ "dev_ata_family_coverage": "30/30"
+}
