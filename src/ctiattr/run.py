@@ -52,6 +52,8 @@ def main(argv=None) -> None:
     ap.add_argument("--k", type=int, default=5)
     ap.add_argument("--concurrency", type=int, default=4)
     ap.add_argument("--name", default=None)
+    ap.add_argument("--backend", choices=["memory", "neo4j"], default="memory",
+                    help="sgs only: candidate generation in memory (reference) or via Cypher on Neo4j")
     args = ap.parse_args(argv)
 
     llm_cfg = LLMConfig.from_env(args.model)
@@ -74,7 +76,11 @@ def main(argv=None) -> None:
     ctx = {"llm": ChatLLM(llm_cfg), "k": args.k}
     if args.method == "sgs":
         from ctiattr.sgs import SGS  # builds its own indexes up front
-        ctx["sgs"] = SGS(Embedder(EmbedConfig.from_env()))
+        graph = None
+        if args.backend == "neo4j":
+            from ctiattr.graph_db import GraphDB
+            graph = GraphDB()
+        ctx["sgs"] = SGS(Embedder(EmbedConfig.from_env()), graph=graph)
     elif args.method != "closed_book":
         ctx["retriever"] = Retriever(Embedder(EmbedConfig.from_env()))
         for t in args.tasks:  # build indexes up front, not inside worker threads

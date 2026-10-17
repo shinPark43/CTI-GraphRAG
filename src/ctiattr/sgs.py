@@ -31,7 +31,7 @@ from ctiattr.config import ROOT
 from ctiattr.data import QA
 from ctiattr.retrieval import Embedder
 from ctiattr.snapshot import Snapshot
-from ctiattr.vendor.cticonnect_metrics import extract_ids
+from ctiattr.vendor.cticonnect_metrics import ID_PATTERNS, extract_ids, normalize_id
 
 TOP = 5
 SYSTEM = "You are a cyber threat intelligence analyst."
@@ -50,6 +50,27 @@ Choose the ONE candidate that best describes the behavior in the passage. Judge 
 what each candidate means, not by shared words. Return JSON with its id."""
 
 
+EXPLAIN = """The passage below was attributed to {id} — {title}.
+Evidence: {card}
+Passage: "{passage}"
+Answer the user's question in 3-5 sentences: {question}
+Mention no other ATT&CK, CWE or CAPEC identifier."""
+
+
+def scrub_ids(text: str, keep: str, titles: dict[str, str]) -> str:
+    """Replace every ATT&CK, CWE or CAPEC identifier except `keep` with its title.
+
+    The official scorer counts every target-type ID in the answer text, so the
+    explanation must not add any; CVE IDs (never a target) are left alone.
+    """
+    for kind in ("mitre", "cwe", "capec"):
+        def sub(m, kind=kind):
+            found = normalize_id(m.group(0), kind)
+            return m.group(0) if found == keep else titles.get(found, "a related entry")
+        text = ID_PATTERNS[kind].sub(sub, text)
+    return text
+
+
 def _as_list(x):
     return x if isinstance(x, list) else ([x] if x else [])
 
@@ -66,13 +87,17 @@ def _sentence_with(chunk: str, phrase: str, limit: int = 160) -> str:
 
 
 class SGS:
-    def __init__(self, embedder: Embedder, snapshot: Snapshot | None = None):
+    def __init__(self, embedder: Embedder, snapshot: Snapshot | None = None, graph=None):
+        """graph: optional ctiattr.graph_db.GraphDB; when given, candidates come from Cypher queries
+        against Neo4j instead of the in-memory indexes (same rankings, see scripts/check_graph_bridges.py)."""
         self.emb = embedder
+        self.graph = graph
         self.s = s = snapshot or Snapshot()
         self.gen = CandidateGenerator(embedder, s)
         self.all_tech = DenseIndex([e.doc_id for e in s.mitre], [f"{e.title}. {e.text}" for e in s.mitre],
                                    embedder)
-        self.title = {e.doc_id.upper(): e.title for e in s.mitre} | {e.doc_id.upper(): e.title for e in s.cwe}
+        self.title = ({e.doc_id.upper(): e.title for e in s.mitre} | {e.doc_id.upper(): e.title for e in s.cwe}
+                      | {c.id: c.name for c in s.capec})
 
         derived = ROOT / "data" / "derived"
         self.ttps = [json.loads(l) for l in (derived / "report_ttps.jsonl").open()]
@@ -108,14 +133,21 @@ class SGS:
         return card + (f" | report examples: {shown}" if shown else " | report examples: none")
 
     def ata_candidates(self, qa: QA) -> tuple[list[str], dict[str, str]]:
-        sims = self.behaviors @ self.emb.embed_one(qa.passage)
-        nearest = [i for i in np.argsort(-sims) if self.ttps[i]["report_id"] != qa.report_id][:30]
-        score = defaultdict(float)
-        for i in nearest:
-            score[self.ttps[i]["technique_id"]] += float(sims[i])
-        vote = sorted(score, key=lambda t: -score[t])
-        base = rrf([[t for t, _ in self.all_tech.rank(qa.question)],
-                    [t for t, _ in self.all_tech.rank(qa.passage)]])
+        pv = self.emb.embed_one(qa.passage)
+        sims = self.behaviors @ pv
+        if self.graph is not None:
+            n = len(self.all_tech.ids)
+            base = rrf([self.graph.dense("technique_emb", self.emb.embed_one(qa.question), n),
+                        self.graph.dense("technique_emb", pv, n)])
+            vote = self.graph.report_vote(pv, qa.report_id)
+        else:
+            nearest = [i for i in np.argsort(-sims) if self.ttps[i]["report_id"] != qa.report_id][:30]
+            score = defaultdict(float)
+            for i in nearest:
+                score[self.ttps[i]["technique_id"]] += float(sims[i])
+            vote = sorted(score, key=lambda t: -score[t])
+            base = rrf([[t for t, _ in self.all_tech.rank(qa.question)],
+                        [t for t, _ in self.all_tech.rank(qa.passage)]])
         ranked = rrf([base, vote])[:TOP]
         return ranked, {t: self._ata_card(t, sims, qa.report_id) for t in ranked}
 
@@ -139,7 +171,12 @@ class SGS:
         return " | ".join(parts)
 
     def vca_candidates(self, qa: QA) -> tuple[list[str], dict[str, str]]:
-        ranked = self.gen.vca(qa.question, qa.passage)["fused"][:TOP]
+        if self.graph is not None:
+            pv = self.emb.embed_one(qa.passage)
+            ranked = rrf([self.graph.dense("cwe_emb", self.emb.embed_one(qa.question), len(self.cwe)),
+                          self.graph.capec_bridge(pv), self.graph.cve_vote(pv)])[:TOP]
+        else:
+            ranked = self.gen.vca(qa.question, qa.passage)["fused"][:TOP]
         cve_sims = self.gen.cve_dense.scores(qa.passage)
         return ranked, {w: self._vca_card(w, cve_sims) for w in ranked}
 
@@ -153,7 +190,14 @@ class SGS:
         out, call = llm.chat_json(prompt, schema, system=SYSTEM)
         return out["id"], call
 
-    def answer(self, llm, qa: QA) -> tuple[str, dict]:
+    def explain(self, llm, qa: QA, chosen: str, card: str):
+        """Explanation step for the chatbot and RAGAS; never changes the chosen ID."""
+        call = llm.chat(EXPLAIN.format(id=chosen, title=self.title.get(chosen.upper(), ""), card=card,
+                                       passage=qa.passage, question=qa.question),
+                        system=SYSTEM, max_tokens=300)
+        return scrub_ids(call.output.strip(), chosen.upper(), self.title), call
+
+    def answer(self, llm, qa: QA, explain: bool = False) -> tuple[str, dict]:
         if qa.task == "ata":
             ranked, cards = self.ata_candidates(qa)
             rotations = 1
@@ -175,5 +219,11 @@ class SGS:
         if extract_ids(title, KIND[qa.task]):
             title = ""
         text = f"{chosen} — {title}" if title else chosen
-        return text, {"candidates": ranked, "cards": cards, "picks": picks, "chosen": chosen,
-                      "retrieved": [ranked], "calls": calls}
+        trace = {"candidates": ranked, "cards": cards, "picks": picks, "chosen": chosen,
+                 "retrieved": [ranked], "calls": calls}
+        if explain:
+            explanation, call = self.explain(llm, qa, chosen, cards[chosen])
+            text += "\n\n" + explanation
+            trace["explanation"] = explanation
+            calls.append(call.to_dict())
+        return text, trace

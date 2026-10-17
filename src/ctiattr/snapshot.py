@@ -122,13 +122,15 @@ class Snapshot:
         out = []
         for r in _jsonl("capec"):
             c = json.loads(r["contents"])
+            # dict.fromkeys: three records list a link twice (CAPEC-545, -571, -644);
+            # count each distinct link once (1,212 CWE links, 271 ATT&CK links)
             rw = (c.get("Related_Weaknesses") or {}).get("Related_Weakness")
-            cwes = tuple(f"CWE-{w['@CWE_ID']}" for w in _as_list(rw)
-                         if f"CWE-{w['@CWE_ID']}" in self.cwe_ids)
+            cwes = tuple(dict.fromkeys(f"CWE-{w['@CWE_ID']}" for w in _as_list(rw)
+                                       if f"CWE-{w['@CWE_ID']}" in self.cwe_ids))
             tm = (c.get("Taxonomy_Mappings") or {}).get("Taxonomy_Mapping")
-            techs = tuple(f"T{m['Entry_ID']}" for m in _as_list(tm)
-                          if m.get("@Taxonomy_Name") == "ATTACK"
-                          and f"T{m.get('Entry_ID')}" in self.technique_ids)
+            techs = tuple(dict.fromkeys(f"T{m['Entry_ID']}" for m in _as_list(tm)
+                                        if m.get("@Taxonomy_Name") == "ATTACK"
+                                        and f"T{m.get('Entry_ID')}" in self.technique_ids))
             desc = c.get("Description") or ""
             if not isinstance(desc, str):
                 desc = json.dumps(desc)
