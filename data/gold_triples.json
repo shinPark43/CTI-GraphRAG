@@ -1,0 +1,1111 @@
+{
+ "source": "CTIConnect (Cheng et al., KDD '26), commit 554797d, CC-BY-4.0; https://github.com/peng-gao-lab/CTIConnect",
+ "split": "dev (data/splits/split_v1.json)",
+ "n": 69,
+ "triples": [
+  {
+   "id": "gt-001",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-1",
+    "name": "Flash Notice: Two Microsoft Zero-Day Vulnerabilities Exploited by Attackers"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1553.005",
+    "name": "Mark-of-the-Web Bypass"
+   },
+   "evidence_text": "CVE-2023-36884 is a remote code execution vulnerability that allowed attackers to craft Microsoft Office documents in a way that circumvented the Mark of the Web (MoTW) security feature. This allowed the files to be opened without triggering a security warning, ultimately enabling remote code execution.",
+   "source_question": "ata-001"
+  },
+  {
+   "id": "gt-002",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-21",
+    "name": "FBI: Androxgh0st malware botnet steals AWS, Microsoft credentials"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1071.003",
+    "name": "Mail Protocols"
+   },
+   "evidence_text": "Androxgh0st malware also supports numerous functions capable of abusing the Simple Mail Transfer Protocol (SMTP), such as scanning and exploiting exposed credentials and application programming interfaces (APIs), and web shell deployment.\" and \"The attackers have also been observed creating fake pages on compromised websites, providing them with a backdoor to access databases containing sensitive information and deploy more malicious tools vital for their operations.",
+   "source_question": "ata-012"
+  },
+  {
+   "id": "gt-003",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-40",
+    "name": "Exposing initial access broker with ties to Conti"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1608.001",
+    "name": "Upload Malware"
+   },
+   "evidence_text": "Using spoofed email accounts, attackers would then send spear phishing emails under the pretext of a business proposal, such as seeking to outsource a software development project or an information security service. At the final stage, the attacker would upload the payload to a public file-sharing service (TransferNow, TransferXL, WeTransfer or OneDrive) and then use a built-in email notification feature to share the file with the target, allowing the final email to originate from the email address of a legitimate file-sharing service and not the attacker’s email, which presents additional detection challenges.",
+   "source_question": "ata-024"
+  },
+  {
+   "id": "gt-004",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-43",
+    "name": "Countering threats from Iran"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1598.003",
+    "name": "Spearphishing Link"
+   },
+   "evidence_text": "In early 2021, APT35 compromised a website affiliated with a UK university to host a phishing kit. Attackers sent email messages with links to this website to harvest credentials for platforms such as Gmail, Hotmail, and Yahoo. Users were instructed to activate an invitation to a (fake) webinar by logging in. The phishing kit will also ask for second-factor authentication codes sent to devices.",
+   "source_question": "ata-027"
+  },
+  {
+   "id": "gt-005",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-43",
+    "name": "Countering threats from Iran"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1584.004",
+    "name": "Server"
+   },
+   "evidence_text": "In early 2021, APT35 compromised a website affiliated with a UK university to host a phishing kit. Attackers sent email messages with links to this website to harvest credentials for platforms such as Gmail, Hotmail, and Yahoo. Users were instructed to activate an invitation to a (fake) webinar by logging in. The phishing kit will also ask for second-factor authentication codes sent to devices.",
+   "source_question": "ata-028"
+  },
+  {
+   "id": "gt-006",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-50",
+    "name": "Zimbra 0-day used to target international government organizations"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1566.002",
+    "name": "Spearphishing Link"
+   },
+   "evidence_text": "The attackers sent emails containing exploit urls to their targets. If a target clicked the link during a logged-in Zimbra session, the url loaded the same framework that Volexity documented in February 2022.",
+   "source_question": "ata-031"
+  },
+  {
+   "id": "gt-007",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-6",
+    "name": "An In-Depth Look at Cuba Ransomware"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1048.003",
+    "name": "Exfiltration Over Unencrypted Non-C2 Protocol"
+   },
+   "evidence_text": "Their research connected this remote access Trojan (RAT) to a newly associated Cuba ransomware affiliate called 'Tropical Scorpius', confirming that Cuba allows threat actors to carry out various post-intrusion activities, including data exfiltration.",
+   "source_question": "ata-035"
+  },
+  {
+   "id": "gt-008",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-6",
+    "name": "An In-Depth Look at Cuba Ransomware"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1486",
+    "name": "Data Encrypted for Impact"
+   },
+   "evidence_text": "Cuba ransomware operators were infiltrating networks by encrypting files using the \".cuba\" extension.",
+   "source_question": "ata-036"
+  },
+  {
+   "id": "gt-009",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-77",
+    "name": "Diplomats Beware: Cloaked Ursa Phishing With a Twist"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1027.012",
+    "name": "LNK Icon Smuggling"
+   },
+   "evidence_text": "These pictures are actually Windows shortcut files masquerading as PNG image files. Also, a file named e-yazi.docx.exe. However, whitespace was added between the .docx and .exe, resulting in the file appearing as a document file. Additionally, a legitimate copy of Microsoft Word named windoc.exe was included to further obscure the malicious payload.",
+   "source_question": "ata-049"
+  },
+  {
+   "id": "gt-010",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-92",
+    "name": "Comcast Xfinity Breached via CitrixBleed; 35M Customers Affected"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1539",
+    "name": "Steal Web Session Cookie"
+   },
+   "evidence_text": "On Monday, the cable giant disclosed a CitrixBleed-enabled breach of its customer data, including usernames and hashed passwords, and, for some, names, contact information, last four digits of Social Security numbers, dates of birth, and security questions and answers. Additionally, session tokens can be accessed from a device's memory, which then can then be used to hijack active sessions. This can effectively bypass authentication and gain unencumbered access to the appliance.",
+   "source_question": "ata-056"
+  },
+  {
+   "id": "gt-011",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-94",
+    "name": "A New, Spookier Gh0st RAT Malware Haunts Global Cyber Targets"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1113",
+    "name": "Screen Capture"
+   },
+   "evidence_text": "The backdoor comes fitted with a keylogger, a screenshotter, a means of accessing the device's camera, and plenty of other useful functions for manipulating the mouse, performing native Windows operation, or simply running arbitrary commands.",
+   "source_question": "ata-058"
+  },
+  {
+   "id": "gt-012",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-97",
+    "name": "Attackers Exploit 6-Year-Old Microsoft Office Bug to Spread Spyware"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1203",
+    "name": "Exploitation for Client Execution"
+   },
+   "evidence_text": "In a security blog I recently read: \"Attackers are exploiting a 6-year-old Microsoft Office remote code execution (RCE) flaw to deliver spyware, in an email campaign weaponized by malicious Excel attachments...\". Please provide: 1) the MITRE ATT&CK category for this attack, 2) an explanation of how this behavior maps to that technique, and 3) what detection methods (x_mitre_detection) are suggested by MITRE ATT&CK. How can we detect this in our SOC using logs, sensors, or NDR tools?",
+   "source_question": "ata-060"
+  },
+  {
+   "id": "gt-013",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-1",
+    "name": "Flash Notice: Two Microsoft Zero-Day Vulnerabilities Exploited by Attackers"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1203",
+    "name": "Exploitation for Client Execution"
+   },
+   "evidence_text": "This week, Microsoft patched two zero-day vulnerabilities (CVE-2023-36884 and CVE-2023-38180). These vulnerabilities are part of Microsoft's August 2023 Patch Tuesday, which also includes security updates for 87 vulnerabilities. Both of these vulnerabilities were exploited in cyberattacks. CVE-2023-36884 is a remote code execution vulnerability that allowed attackers to craft Microsoft Office documents in a way that circumvented the Mark of the Web (MoTW) security feature. This allowed the files to be opened without triggering a security warning, ultimately enabling remote code execution.",
+   "source_question": "ata-062"
+  },
+  {
+   "id": "gt-014",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-4",
+    "name": "New Ransomware Strains - CACTUS and 3AM"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1190",
+    "name": "Exploit Public-Facing Application"
+   },
+   "evidence_text": "The initial exploit involves the exploitation of vulnerable VPN appliances, a prevalent method observed across multiple CACTUS incidents.",
+   "source_question": "ata-064"
+  },
+  {
+   "id": "gt-015",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-20",
+    "name": "Government webmail hacked via XSS bugs in global spy campaign"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1566",
+    "name": "Phishing"
+   },
+   "evidence_text": "Hackers are running a worldwide cyberespionage campaign dubbed 'RoundPress,' leveraging zero-day and n-day flaws in webmail servers to steal email from high-value government organizations. The attack starts with a spear-phishing email referencing current news or political events, often including excerpts from news articles to add legitimacy. All that is needed from the victim is to open the email to view it, as no other interaction/clicks, redirections, or data input is required for",
+   "source_question": "ata-071"
+  },
+  {
+   "id": "gt-016",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-21",
+    "name": "FBI: Androxgh0st malware botnet steals AWS, Microsoft credentials"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1552.001",
+    "name": "Credentials In Files"
+   },
+   "evidence_text": "I recently read in a security blog: \"CISA and the FBI warned today that threat actors using Androxgh0st malware are building a botnet focused on cloud credential theft and using the stolen information to deliver additional malicious payloads. This botnet was first spotted by Lacework Labs in 2022 and was controlling over 40,000 devices\". The malware scans for vulnerabilities like CVE-2017-9841, CVE-2021-41773, and CVE-2018-15133.",
+   "source_question": "ata-072"
+  },
+  {
+   "id": "gt-017",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-37",
+    "name": "Initial access broker repurposing techniques in targeted attacks against Ukraine"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1566",
+    "name": "Phishing"
+   },
+   "evidence_text": "TAG started actively tracking UAC-0098 after identifying an email phishing campaign delivering AnchorMail (referred to as 'LackeyBuilder') in late April 2022. AnchorMail is a version of the Anchor backdoor that uses the simple mail transfer protocol (SMTPS) for command and control (C2) communicatio",
+   "source_question": "ata-082"
+  },
+  {
+   "id": "gt-018",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-39",
+    "name": "Russian threat group COLDRIVER expands its targeting of Western officials to include the use of malware"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1053.005",
+    "name": "Scheduled Task"
+   },
+   "evidence_text": "The backdoor establishes persistence via an obfuscated PowerShell command which creates a scheduled task named CalendarChecker.",
+   "source_question": "ata-083"
+  },
+  {
+   "id": "gt-019",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-43",
+    "name": "Countering threats from Iran"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1566",
+    "name": "Phishing"
+   },
+   "evidence_text": "Hijacked websites used for credential phishing attacks: In early 2021, APT35 compromised a website affiliated with a UK university to host a phishing kit. Attackers sent email messages with links to this website to harvest credentials for platforms such as Gmail, Hotmail, and Yahoo. Users were inst",
+   "source_question": "ata-086"
+  },
+  {
+   "id": "gt-020",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-104",
+    "name": "North Korea Debuts 'SpectralBlur' Malware Amid macOS Onslaught"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1105",
+    "name": "Ingress Tool Transfer"
+   },
+   "evidence_text": "can upload/download files, run a shell, update its configuration, delete files, hibernate, or sleep, based on commands issued from the [command-and-control server]",
+   "source_question": "ata-106"
+  },
+  {
+   "id": "gt-021",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-104",
+    "name": "North Korea Debuts 'SpectralBlur' Malware Amid macOS Onslaught"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1059",
+    "name": "Command and Scripting Interpreter"
+   },
+   "evidence_text": "can upload/download files, run a shell, update its configuration, delete files, hibernate, or sleep, based on commands issued from the [command-and-control server]",
+   "source_question": "ata-107"
+  },
+  {
+   "id": "gt-022",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-194",
+    "name": "Mispadu Banking Trojan Resurfaces | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1566.001",
+    "name": "Spearphishing Attachment"
+   },
+   "evidence_text": "Mispadu’s entry vector is spam, similar to past campaigns involving the malware.",
+   "source_question": "ata-108"
+  },
+  {
+   "id": "gt-023",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-194",
+    "name": "Mispadu Banking Trojan Resurfaces | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1566.002",
+    "name": "Spearphishing Link"
+   },
+   "evidence_text": "By sending messages that refer to overdue invoices, attackers create a seemingly urgent situation that then persuades receivers to download a .zip file from malicious URLs.",
+   "source_question": "ata-109"
+  },
+  {
+   "id": "gt-024",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-186",
+    "name": "Malicious Actors Target Comm Apps such as Zoom, Slack, Discord | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1219",
+    "name": "Remote Access Tools"
+   },
+   "evidence_text": "In April, we discovered an attack that used real Zoom installers that came with the RevCode WebMonitor RAT (Backdoor.Win32.REVCODE.THDBABO). This malware variant allows its operator to execute commands remotely, such as adding or deleting files, recording keystrokes, and gathering information. Another example of this is the ZAPIZ malware (Trojan.Win32.ZAPIZ.A), a trojan that also comes bundled with a legitimate Zoom installer. Once downloaded, it will kill all running remote utilities, after which it will use PORT=5650/TCP for remote inbounding. Based on our analysis, ZAPIZ will perform information theft, gathering the target machine’s usernames and its machine name — perhaps as a prelude to further attacks.",
+   "source_question": "ata-126"
+  },
+  {
+   "id": "gt-025",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-186",
+    "name": "Malicious Actors Target Comm Apps such as Zoom, Slack, Discord | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1204.002",
+    "name": "Malicious File"
+   },
+   "evidence_text": "The most common Zoom-related attack technique is the use of Zoom installers bundled with malware. In some cases, the attackers use fake Zoom installers to trick users into installing them on their machines.",
+   "source_question": "ata-127"
+  },
+  {
+   "id": "gt-026",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-210",
+    "name": "MoustachedBouncer: Espionage against foreign diplomats in Belarus"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1557",
+    "name": "Adversary-in-the-Middle"
+   },
+   "evidence_text": "MoustachedBouncer has most likely been able to perform adversary-in-the-middle (AitM) attacks at the ISP level, within Belarus, in order to compromise its targets.",
+   "source_question": "ata-134"
+  },
+  {
+   "id": "gt-027",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-215",
+    "name": "SwiftSlicer: New destructive wiper malware strikes Ukraine"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1484.001",
+    "name": "Group Policy Modification"
+   },
+   "evidence_text": "It was deployed through Group Policy, which suggests that the attackers had taken control of the victim’s Active Directory environment.",
+   "source_question": "ata-146"
+  },
+  {
+   "id": "gt-028",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-215",
+    "name": "SwiftSlicer: New destructive wiper malware strikes Ukraine"
+   },
+   "predicate": "DESCRIBES_TECHNIQUE",
+   "object": {
+    "type": "AttackTechnique",
+    "id": "T1485",
+    "name": "Data Destruction"
+   },
+   "evidence_text": "Once executed it deletes shadow copies, recursively overwrites files located in %CSIDL_SYSTEM%\\drivers, %CSIDL_SYSTEM_DRIVE%\\Windows\\NTDS and other non-system drives and then reboots computer.",
+   "source_question": "ata-147"
+  },
+  {
+   "id": "gt-029",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-11",
+    "name": "An In-Depth Look at Iranian APT \"MuddyWater\""
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-200",
+    "name": "Exposure of Sensitive Information to an Unauthorized Actor"
+   },
+   "evidence_text": "Publicly accessible staff email addresses and related details enabled targeted phishing and social engineering used as the initial access vector.",
+   "source_question": "vca-005"
+  },
+  {
+   "id": "gt-030",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-21",
+    "name": "FBI: Androxgh0st malware botnet steals AWS, Microsoft credentials"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-489",
+    "name": "Active Debug Code"
+   },
+   "evidence_text": "Laravel applications left in debug/testing mode in production expose environment details and secrets that aid compromise.",
+   "source_question": "vca-017"
+  },
+  {
+   "id": "gt-031",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-37",
+    "name": "Initial access broker repurposing techniques in targeted attacks against Ukraine"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-345",
+    "name": "Insufficient Verification of Data Authenticity"
+   },
+   "evidence_text": "Trust placed in spoofed communications and domains (starlinkua.info, microsoftua.com, gov.uz.ua) and ‘official’ update lures without strong verification of sender/domain or content authenticity.",
+   "source_question": "vca-030"
+  },
+  {
+   "id": "gt-032",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-37",
+    "name": "Initial access broker repurposing techniques in targeted attacks against Ukraine"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-807",
+    "name": "Reliance on Untrusted Inputs in a Security Decision"
+   },
+   "evidence_text": "Security decisions (opening attachments, enabling add-ins, running installers from cloud links like Dropbox/Google Cloud Storage) based on untrusted, easily spoofed indicators such as email sender/display name and familiar hosting platforms.",
+   "source_question": "vca-031"
+  },
+  {
+   "id": "gt-033",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-4",
+    "name": "New Ransomware Strains - CACTUS and 3AM"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-668",
+    "name": "Exposure of Resource to Wrong Sphere"
+   },
+   "evidence_text": "Large numbers of internet-exposed Qlik Sense instances and vulnerable VPN appliances broaden the attack surface, allowing untrusted networks to reach internal services.",
+   "source_question": "vca-032"
+  },
+  {
+   "id": "gt-034",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-6",
+    "name": "An In-Depth Look at Cuba Ransomware"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-295",
+    "name": "Improper Certificate Validation"
+   },
+   "evidence_text": "A malicious kernel driver (ApcHelper.sys) signed with a stolen certificate was accepted, indicating insufficient revocation/reputation checks or driver-block rules for code-signing trust.",
+   "source_question": "vca-050"
+  },
+  {
+   "id": "gt-035",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-6",
+    "name": "An In-Depth Look at Cuba Ransomware"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-308",
+    "name": "Use of Single-factor Authentication"
+   },
+   "evidence_text": "Stolen credentials were sufficient to access exposed RDP and other services, indicating lack of MFA on remote access paths.",
+   "source_question": "vca-051"
+  },
+  {
+   "id": "gt-036",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-61",
+    "name": "Midnight Blizzard conducts targeted social engineering over Microsoft Teams | Microsoft Security Blog"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-1007",
+    "name": "Insufficient Visual Distinction of Homoglyphs Presented to User"
+   },
+   "evidence_text": "Actor created onmicrosoft.com subdomains using homoglyphs and security‐themed names (e.g., mlcrosoftaccounts.onmicrosoft[.]com) to visually spoof legitimate domains and deceive users.",
+   "source_question": "vca-053"
+  },
+  {
+   "id": "gt-037",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-61",
+    "name": "Midnight Blizzard conducts targeted social engineering over Microsoft Teams | Microsoft Security Blog"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-346",
+    "name": "Origin Validation Error"
+   },
+   "evidence_text": "External collaboration/Teams settings allowed unsolicited chats from untrusted tenants; insufficient validation/allow‐listing of trusted organizations enabled spoofed “support” messages to reach users.",
+   "source_question": "vca-054"
+  },
+  {
+   "id": "gt-038",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-75",
+    "name": "Conti Ransomware Gang: An Overview"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-269",
+    "name": "Improper Privilege Management"
+   },
+   "evidence_text": "Excessive privileges/weak separation let attackers escalate rights, stop services, and delete Volume Shadow Copies to inhibit recovery.",
+   "source_question": "vca-064"
+  },
+  {
+   "id": "gt-039",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-75",
+    "name": "Conti Ransomware Gang: An Overview"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-732",
+    "name": "Incorrect Permission Assignment for Critical Resource"
+   },
+   "evidence_text": "Overly permissive SMB/Windows Admin shares and shared content enabled lateral movement and tainting of shared files.",
+   "source_question": "vca-065"
+  },
+  {
+   "id": "gt-040",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-84",
+    "name": "Over the Kazuar’s Nest: Cracking Down on a Freshly Hatched Backdoor Used by Pensive Ursa (Aka Turla)"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-312",
+    "name": "Cleartext Storage of Sensitive Information"
+   },
+   "evidence_text": "Multiple targeted artifacts (e.g., Windows unattended files, Git/Cloud app configs, browser stores) keep tokens/credentials in readable/plaintext files that Kazuar’s steal/unattend tasks exfiltrate.",
+   "source_question": "vca-075"
+  },
+  {
+   "id": "gt-041",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-84",
+    "name": "Over the Kazuar’s Nest: Cracking Down on a Freshly Hatched Backdoor Used by Pensive Ursa (Aka Turla)"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-321",
+    "name": "Use of Hard-coded Cryptographic Key"
+   },
+   "evidence_text": "Kazuar embeds a fixed RSA public key and a hard‐coded GUID used across samples (for task encryption/cookies), leading to key/material reuse.",
+   "source_question": "vca-076"
+  },
+  {
+   "id": "gt-042",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-87",
+    "name": "Fake CVE-2023-40477 Proof of Concept Leads to VenomRAT"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-829",
+    "name": "Inclusion of Functionality from Untrusted Control Sphere"
+   },
+   "evidence_text": "The PoC embeds logic to fetch and run external scripts/binaries controlled by the attacker (remote batch/PowerShell and EXE), effectively including untrusted functionality at runtime.",
+   "source_question": "vca-078"
+  },
+  {
+   "id": "gt-043",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-92",
+    "name": "Comcast Xfinity Breached via CitrixBleed; 35M Customers Affected"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-200",
+    "name": "Exposure of Sensitive Information to an Unauthorized Actor"
+   },
+   "evidence_text": "Attackers obtained sensitive data (usernames, hashed passwords, PII, security Q/A) after exploiting CitrixBleed, resulting in unauthorized disclosure of customer information.",
+   "source_question": "vca-083"
+  },
+  {
+   "id": "gt-044",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-94",
+    "name": "A New, Spookier Gh0st RAT Malware Haunts Global Cyber Targets"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-345",
+    "name": "Insufficient Verification of Data Authenticity"
+   },
+   "evidence_text": "Targets open and execute unverified archives/shortcuts from phishing emails, lacking checks such as trusted signatures or provenance validation.",
+   "source_question": "vca-085"
+  },
+  {
+   "id": "gt-045",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-95",
+    "name": "Google Patches Another Chrome Zero-Day as Browser Attacks Mount"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-190",
+    "name": "Integer Overflow or Wraparound"
+   },
+   "evidence_text": "CVE-2023-6345 — integer overflow in Chrome’s Skia graphics library that can be triggered via a malicious file, leading to memory corruption and potential sandbox escape from the renderer process.",
+   "source_question": "vca-086"
+  },
+  {
+   "id": "gt-046",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-95",
+    "name": "Google Patches Another Chrome Zero-Day as Browser Attacks Mount"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-787",
+    "name": "Out-of-bounds Write"
+   },
+   "evidence_text": "CVE-2023-5217 — heap out-of-bounds write in libvpx (VP8) used by Chromium-based browsers, exploitable via crafted media/WebRTC to achieve memory corruption and potential code execution.",
+   "source_question": "vca-087"
+  },
+  {
+   "id": "gt-047",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-1",
+    "name": "Flash Notice: Two Microsoft Zero-Day Vulnerabilities Exploited by Attackers"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-693",
+    "name": "Protection Mechanism Failure"
+   },
+   "evidence_text": "CVE-2023-36884 allowed crafted Office documents to bypass Mark of the Web/Protected View, suppressing security warnings and enabling remote code execution.",
+   "source_question": "vca-092"
+  },
+  {
+   "id": "gt-048",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-20",
+    "name": "Government webmail hacked via XSS bugs in global spy campaign"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-79",
+    "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+   },
+   "evidence_text": "Hackers are running a worldwide cyberespionage campaign dubbed 'RoundPress,' leveraging zero-day and n-day flaws in webmail servers to steal email from high-value government organizations.",
+   "source_question": "vca-095"
+  },
+  {
+   "id": "gt-049",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-21",
+    "name": "FBI: Androxgh0st malware botnet steals AWS, Microsoft credentials"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-22",
+    "name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+   },
+   "evidence_text": "The CVE-2021-41773 Apache HTTP Server path traversal and CVE-2017-9841 PHPUnit command injection vulnerabilities have been added to the catalog in November 2021 and February 2022, respectively.",
+   "source_question": "vca-096"
+  },
+  {
+   "id": "gt-050",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-39",
+    "name": "Russian threat group COLDRIVER expands its targeting of Western officials to include the use of malware"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-507",
+    "name": "Trojan Horse"
+   },
+   "evidence_text": "When the user opens the benign PDF, the text appears encrypted. If the target responds that they cannot read the encrypted document, the COLDRIVER impersonation account responds with a link, usually hosted on a cloud storage site, to a “decryption” utility for the target to use. This decryption utility, while also displaying a decoy document, is in fact a backdoor, tracked as SPICA, giving COLDRIVER access to the victim’s machine.",
+   "source_question": "vca-105"
+  },
+  {
+   "id": "gt-051",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-43",
+    "name": "Countering threats from Iran"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-284",
+    "name": "Improper Access Control"
+   },
+   "evidence_text": "In early 2021, APT35 compromised a website affiliated with a UK university to host a phishing kit. Attackers sent email messages with links to this website to harvest credentials for platforms such as Gmail, Hotmail, and Yahoo. Users were instructed to activate an invitation to a (fake) webinar by logging in. The phishing kit will also ask for second-factor authentication codes sent to devices. APT35 has relied on this technique since 2017 — targeting high-value accounts in government, academia, journalism, NGOs, foreign policy, and national security.",
+   "source_question": "vca-106"
+  },
+  {
+   "id": "gt-052",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-54",
+    "name": "Financially motivated threat actors misusing App Installer | Microsoft Security Blog"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-1188",
+    "name": "Initialization of a Resource with an Insecure Default"
+   },
+   "evidence_text": "Since mid-November 2023, Microsoft Threat Intelligence has observed threat actors, including financially motivated actors like Storm-0569, Storm-1113, Sangria Tempest, and Storm-1674, utilizing the ms-appinstaller URI scheme (App Installer) to distribute malware.",
+   "source_question": "vca-110"
+  },
+  {
+   "id": "gt-053",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-77",
+    "name": "Diplomats Beware: Cloaked Ursa Phishing With a Twist"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-345",
+    "name": "Insufficient Verification of Data Authenticity"
+   },
+   "evidence_text": "The key difference with these illegitimate versions is that if a victim clicks on a link offering “more high quality photos,” a URL shortener service (either t[.]ly or tinyurl[.]com) will redirect them to a legitimate site. This site would have been coopted by Cloaked Ursa, resulting in the download of a malicious payload. When a victim attempts to view any of the “high quality photos” in the download, the malware executes silently in the background while the selected image displays on the victim’s screen. These pictures are actually Windows shortcut files masquerading as PNG image files. We’ve observed two versions of these illegitimate flyers. The only difference between the two is the shortened URL used in each case.",
+   "source_question": "vca-116"
+  },
+  {
+   "id": "gt-054",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-94",
+    "name": "A New, Spookier Gh0st RAT Malware Haunts Global Cyber Targets"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-506",
+    "name": "Embedded Malicious Code"
+   },
+   "evidence_text": "A New, Spookier Gh0st RAT Malware Haunts Global Cyber Targets. A new variant of the infamous 'G' called 'SugarGh0st RAT' embeds malicious JavaScript in Windows LNK shortcut files inside archives, installing the DLL payload while showing a decoy document.",
+   "source_question": "vca-122"
+  },
+  {
+   "id": "gt-055",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-97",
+    "name": "Attackers Exploit 6-Year-Old Microsoft Office Bug to Spread Spyware"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-787",
+    "name": "Out-of-bounds Write"
+   },
+   "evidence_text": "Attackers Exploit 6-Year-Old Microsoft Office Bug to Spread Spyware. Malicious attachments that exploit an RCE flaw from 2017 are propagating Agent Tesla via socially engineered emails and an evasive infection method.",
+   "source_question": "vca-124"
+  },
+  {
+   "id": "gt-056",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-1",
+    "name": "Flash Notice: Two Microsoft Zero-Day Vulnerabilities Exploited by Attackers"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-400",
+    "name": "Uncontrolled Resource Consumption"
+   },
+   "evidence_text": "could potentially lead to Distributed Denial of Service (DDoS) attacks on .NET applications and Visual Studio.",
+   "source_question": "vca-127"
+  },
+  {
+   "id": "gt-057",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-104",
+    "name": "North Korea Debuts 'SpectralBlur' Malware Amid macOS Onslaught"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-506",
+    "name": "Embedded Malicious Code"
+   },
+   "evidence_text": "can upload/download files, run a shell, update its configuration, delete files, hibernate, or sleep, based on commands issued from the [command-and-control server]",
+   "source_question": "vca-142"
+  },
+  {
+   "id": "gt-058",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-194",
+    "name": "Mispadu Banking Trojan Resurfaces | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-494",
+    "name": "Download of Code Without Integrity Check"
+   },
+   "evidence_text": "By sending messages that refer to overdue invoices, attackers create a seemingly urgent situation that then persuades receivers to download a .zip file from malicious URLs.",
+   "source_question": "vca-144"
+  },
+  {
+   "id": "gt-059",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-194",
+    "name": "Mispadu Banking Trojan Resurfaces | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-506",
+    "name": "Embedded Malicious Code"
+   },
+   "evidence_text": "This zip file contains an MSI (Microsoft Installer file) that has a VBScript. This is followed by three layers of obfuscation that, when deobfuscated, reveal the final VBScript file that executes an AutoIT Loader/Injector.",
+   "source_question": "vca-145"
+  },
+  {
+   "id": "gt-060",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-186",
+    "name": "Malicious Actors Target Comm Apps such as Zoom, Slack, Discord | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-494",
+    "name": "Download of Code Without Integrity Check"
+   },
+   "evidence_text": "The most common Zoom-related attack technique is the use of Zoom installers bundled with malware.",
+   "source_question": "vca-160"
+  },
+  {
+   "id": "gt-061",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-210",
+    "name": "MoustachedBouncer: Espionage against foreign diplomats in Belarus"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-300",
+    "name": "Channel Accessible by Non-Endpoint"
+   },
+   "evidence_text": "MoustachedBouncer has used the adversary-in-the-middle technique since 2020 to redirect captive portal checks to a C&C server and deliver malware plugins via SMB shares.",
+   "source_question": "vca-168"
+  },
+  {
+   "id": "gt-062",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-210",
+    "name": "MoustachedBouncer: Espionage against foreign diplomats in Belarus"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-319",
+    "name": "Cleartext Transmission of Sensitive Information"
+   },
+   "evidence_text": "It uses the SMTP and IMAP (email) protocols for C&C communications.",
+   "source_question": "vca-169"
+  },
+  {
+   "id": "gt-063",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-215",
+    "name": "SwiftSlicer: New destructive wiper malware strikes Ukraine"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-269",
+    "name": "Improper Privilege Management"
+   },
+   "evidence_text": "It was deployed through Group Policy, which suggests that the attackers had taken control of the victim’s Active Directory environment.",
+   "source_question": "vca-180"
+  },
+  {
+   "id": "gt-064",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-215",
+    "name": "SwiftSlicer: New destructive wiper malware strikes Ukraine"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-693",
+    "name": "Protection Mechanism Failure"
+   },
+   "evidence_text": "Once executed it deletes shadow copies, recursively overwrites files located in %CSIDL_SYSTEM%\\drivers, %CSIDL_SYSTEM_DRIVE%\\Windows\\NTDS and other non-system drives and then reboots computer.",
+   "source_question": "vca-181"
+  },
+  {
+   "id": "gt-065",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-175",
+    "name": "Evil Corp Pivots LockBit to Dodge U.S. Sanctions | Threatpost"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-829",
+    "name": "Inclusion of Functionality from Untrusted Control Sphere"
+   },
+   "evidence_text": "UNC2165 is using a combination of the FakeUpdates infection chain to gain access to target networks followed by the LockBit ransomware.",
+   "source_question": "vca-203"
+  },
+  {
+   "id": "gt-066",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-189",
+    "name": "New APT Group Earth Berberoka Targets Gambling Websites With Old and New Malware | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-427",
+    "name": "Uncontrolled Search Path Element"
+   },
+   "evidence_text": "hijacking loaded modules to launch malicious code.",
+   "source_question": "vca-207"
+  },
+  {
+   "id": "gt-067",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-189",
+    "name": "New APT Group Earth Berberoka Targets Gambling Websites With Old and New Malware | Trend Micro (US)"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-506",
+    "name": "Embedded Malicious Code"
+   },
+   "evidence_text": "hiding malicious payloads and modules in modified bitmap image (BMP) files.",
+   "source_question": "vca-208"
+  },
+  {
+   "id": "gt-068",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-117",
+    "name": "Magento Vulnerability Exploited to Deploy Persistent Backdoor - SecurityWeek"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-78",
+    "name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+   },
+   "evidence_text": "The issue, tracked as CVE-2024-20720 (CVSS score of 9.1), is described as an OS command injection flaw leading to arbitrary code execution without user interaction.",
+   "source_question": "vca-209"
+  },
+  {
+   "id": "gt-069",
+   "subject": {
+    "type": "ThreatReport",
+    "id": "BLOG-117",
+    "name": "Magento Vulnerability Exploited to Deploy Persistent Backdoor - SecurityWeek"
+   },
+   "predicate": "DESCRIBES_WEAKNESS",
+   "object": {
+    "type": "CWE",
+    "id": "CWE-94",
+    "name": "Improper Control of Generation of Code ('Code Injection')"
+   },
+   "evidence_text": "Attackers combine the Magento layout parser with the beberlei/assert package (installed by default) to execute system commands.",
+   "source_question": "vca-210"
+  }
+ ]
+}

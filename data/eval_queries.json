@@ -1,0 +1,228 @@
+{
+ "source": "CTIConnect (Cheng et al., KDD '26), commit 554797d, CC-BY-4.0; https://github.com/peng-gao-lab/CTIConnect",
+ "split": "dev (data/splits/split_v1.json)",
+ "subset": "mini20",
+ "n": 20,
+ "queries": [
+  {
+   "id": "ata-028",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"In early 2021, APT35 compromised a website affiliated with a UK university to host a phishing kit. Attackers sent email messages with links to this website to harvest credentials for platforms such as Gmail, Hotmail, and Yahoo. Users were instructed to activate an invitation to a (fake) webinar by logging in. The phishing kit will also ask for second-factor authentication codes sent to devices.\" Please identify the MITRE ATT&CK category for this behavior and explain how the description maps to it. Additionally, how can this behavior be detected in our SOC using logs, sensors, or NDR tools (specifically addressing the x_mitre_detection aspect)?",
+   "passage": "In early 2021, APT35 compromised a website affiliated with a UK university to host a phishing kit. Attackers sent email messages with links to this website to harvest credentials for platforms such as Gmail, Hotmail, and Yahoo. Users were instructed to activate an invitation to a (fake) webinar by logging in. The phishing kit will also ask for second-factor authentication codes sent to devices.",
+   "report_id": "BLOG-43",
+   "report_title": "Countering threats from Iran",
+   "gold_id": "T1584.004",
+   "gold_name": "Server",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-031",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"The attackers sent emails containing exploit urls to their targets. If a target clicked the link during a logged-in Zimbra session, the url loaded the same framework that Volexity documented in February 2022.\" Please identify: 1) What is the MITRE ATT&CK category associated with this behavior? 2) Explain how the described behavior maps to that MITRE technique. 3) Which platform(s) are applicable for this technique (as specified in x_mitre_platforms)?",
+   "passage": "The attackers sent emails containing exploit urls to their targets. If a target clicked the link during a logged-in Zimbra session, the url loaded the same framework that Volexity documented in February 2022.",
+   "report_id": "BLOG-50",
+   "report_title": "Zimbra 0-day used to target international government organizations",
+   "gold_id": "T1566.002",
+   "gold_name": "Spearphishing Link",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-036",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"Cuba ransomware operators were infiltrating networks by encrypting files using the \".cuba\" extension.\" Please provide: 1) the MITRE ATT&CK category that maps to this behavior, 2) an explanation of the mapping between the ransomware behavior and the technique, and 3) which operating systems and platforms are affected (e.g., Linux, macOS, Windows, IaaS, ESXi)?",
+   "passage": "Cuba ransomware operators were infiltrating networks by encrypting files using the \".cuba\" extension.",
+   "report_id": "BLOG-6",
+   "report_title": "An In-Depth Look at Cuba Ransomware",
+   "gold_id": "T1486",
+   "gold_name": "Data Encrypted for Impact",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-049",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"These pictures are actually Windows shortcut files masquerading as PNG image files. Also, a file named e-yazi.docx.exe. However, whitespace was added between the .docx and .exe, resulting in the file appearing as a document file. Additionally, a legitimate copy of Microsoft Word named windoc.exe was included to further obscure the malicious payload.\" Identify the MITRE ATT&CK category that maps this behavior and explain the mapping; also, which telemetry/log data sources (e.g., File Metadata, File Creation) can be used to catch this activity?",
+   "passage": "These pictures are actually Windows shortcut files masquerading as PNG image files. Also, a file named e-yazi.docx.exe. However, whitespace was added between the .docx and .exe, resulting in the file appearing as a document file. Additionally, a legitimate copy of Microsoft Word named windoc.exe was included to further obscure the malicious payload.",
+   "report_id": "BLOG-77",
+   "report_title": "Diplomats Beware: Cloaked Ursa Phishing With a Twist",
+   "gold_id": "T1027.012",
+   "gold_name": "LNK Icon Smuggling",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-056",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"On Monday, the cable giant disclosed a CitrixBleed-enabled breach of its customer data, including usernames and hashed passwords, and, for some, names, contact information, last four digits of Social Security numbers, dates of birth, and security questions and answers. Additionally, session tokens can be accessed from a device's memory, which then can then be used to hijack active sessions. This can effectively bypass authentication and gain unencumbered access to the appliance.\" Please provide: 1) the MITRE ATT&CK technique that maps to this behavior, 2) an explanation of how this behavior maps to the technique, and 3) the detection methods (e.g., “How can we detect this in our SOC using logs, sensors, or NDR tools?”) as described in the MITRE ATT&CK framework.",
+   "passage": "On Monday, the cable giant disclosed a CitrixBleed-enabled breach of its customer data, including usernames and hashed passwords, and, for some, names, contact information, last four digits of Social Security numbers, dates of birth, and security questions and answers. Additionally, session tokens can be accessed from a device's memory, which then can then be used to hijack active sessions. This can effectively bypass authentication and gain unencumbered access to the appliance.",
+   "report_id": "BLOG-92",
+   "report_title": "Comcast Xfinity Breached via CitrixBleed; 35M Customers Affected",
+   "gold_id": "T1539",
+   "gold_name": "Steal Web Session Cookie",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-106",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"can upload/download files, run a shell, update its configuration, delete files, hibernate, or sleep, based on commands issued from the [command-and-control server]\". Which MITRE ATT&CK technique corresponds to this behavior?",
+   "passage": "can upload/download files, run a shell, update its configuration, delete files, hibernate, or sleep, based on commands issued from the [command-and-control server]",
+   "report_id": "BLOG-104",
+   "report_title": "North Korea Debuts 'SpectralBlur' Malware Amid macOS Onslaught",
+   "gold_id": "T1105",
+   "gold_name": "Ingress Tool Transfer",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-107",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"can upload/download files, run a shell, update its configuration, delete files, hibernate, or sleep, based on commands issued from the [command-and-control server]\". Which MITRE ATT&CK technique corresponds to this behavior?",
+   "passage": "can upload/download files, run a shell, update its configuration, delete files, hibernate, or sleep, based on commands issued from the [command-and-control server]",
+   "report_id": "BLOG-104",
+   "report_title": "North Korea Debuts 'SpectralBlur' Malware Amid macOS Onslaught",
+   "gold_id": "T1059",
+   "gold_name": "Command and Scripting Interpreter",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-127",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"The most common Zoom-related attack technique is the use of Zoom installers bundled with malware. In some cases, the attackers use fake Zoom installers to trick users into installing them on their machines.\" Which MITRE ATT&CK technique corresponds to this behavior?",
+   "passage": "The most common Zoom-related attack technique is the use of Zoom installers bundled with malware. In some cases, the attackers use fake Zoom installers to trick users into installing them on their machines.",
+   "report_id": "BLOG-186",
+   "report_title": "Malicious Actors Target Comm Apps such as Zoom, Slack, Discord | Trend Micro (US)",
+   "gold_id": "T1204.002",
+   "gold_name": "Malicious File",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-134",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"MoustachedBouncer has most likely been able to perform adversary-in-the-middle (AitM) attacks at the ISP level, within Belarus, in order to compromise its targets.\" Which MITRE ATT&CK technique corresponds to this behavior? Please explain the mapping, and list the data sources.",
+   "passage": "MoustachedBouncer has most likely been able to perform adversary-in-the-middle (AitM) attacks at the ISP level, within Belarus, in order to compromise its targets.",
+   "report_id": "BLOG-210",
+   "report_title": "MoustachedBouncer: Espionage against foreign diplomats in Belarus",
+   "gold_id": "T1557",
+   "gold_name": "Adversary-in-the-Middle",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "ata-135",
+   "task": "ata",
+   "question": "I recently read in a security blog: \"MoustachedBouncer has used the adversary-in-the-middle technique since 2020 to redirect captive portal checks to a C&C server and deliver malware plugins via SMB shares.\" Which MITRE ATT&CK technique corresponds to this behavior? Please explain the mapping, and list the data sources.",
+   "passage": "MoustachedBouncer has used the adversary-in-the-middle technique since 2020 to redirect captive portal checks to a C&C server and deliver malware plugins via SMB shares.",
+   "report_id": "BLOG-210",
+   "report_title": "MoustachedBouncer: Espionage against foreign diplomats in Belarus",
+   "gold_id": "T1557",
+   "gold_name": "Adversary-in-the-Middle",
+   "target_type": "AttackTechnique"
+  },
+  {
+   "id": "vca-017",
+   "task": "vca",
+   "question": "I recently read in a security blog: 'Laravel applications left in debug/testing mode in production expose environment details and secrets that aid compromise.' Please provide: 1) the CWE category that maps to this vulnerability, 2) an explanation of how this vulnerability maps to the CWE, and 3) at what stage do developers typically introduce this issue?",
+   "passage": "Laravel applications left in debug/testing mode in production expose environment details and secrets that aid compromise.",
+   "report_id": "BLOG-21",
+   "report_title": "FBI: Androxgh0st malware botnet steals AWS, Microsoft credentials",
+   "gold_id": "CWE-489",
+   "gold_name": "Active Debug Code",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-032",
+   "task": "vca",
+   "question": "I recently read in a security blog: \"Large numbers of internet-exposed Qlik Sense instances and vulnerable VPN appliances broaden the attack surface, allowing untrusted networks to reach internal services.\" Please provide: 1) the CWE category that maps to this vulnerability, 2) an explanation of how this vulnerability maps to the CWE, and 3) at what stage do developers typically introduce this issue according to the CWE's Modes_Of_Introduction?",
+   "passage": "Large numbers of internet-exposed Qlik Sense instances and vulnerable VPN appliances broaden the attack surface, allowing untrusted networks to reach internal services.",
+   "report_id": "BLOG-4",
+   "report_title": "New Ransomware Strains - CACTUS and 3AM",
+   "gold_id": "CWE-668",
+   "gold_name": "Exposure of Resource to Wrong Sphere",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-054",
+   "task": "vca",
+   "question": "I recently read in a security blog: 'External collaboration/Teams settings allowed unsolicited chats from untrusted tenants; insufficient validation/allow‐listing of trusted organizations enabled spoofed “support” messages to reach users.' Can you identify the CWE category that this vulnerability maps to and explain how it relates to the CWE criteria? Also, how often do attackers actually exploit this type of vulnerability in real attacks?",
+   "passage": "External collaboration/Teams settings allowed unsolicited chats from untrusted tenants; insufficient validation/allow‐listing of trusted organizations enabled spoofed “support” messages to reach users.",
+   "report_id": "BLOG-61",
+   "report_title": "Midnight Blizzard conducts targeted social engineering over Microsoft Teams | Microsoft Security Blog",
+   "gold_id": "CWE-346",
+   "gold_name": "Origin Validation Error",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-075",
+   "task": "vca",
+   "question": "I recently read in a security blog: 'Multiple targeted artifacts (e.g., Windows unattended files, Git/Cloud app configs, browser stores) keep tokens/credentials in readable/plaintext files that Kazuar’s steal/unattend tasks exfiltrate.' Please provide: 1) the CWE category that maps to this vulnerability, 2) an explanation of how this vulnerability maps to that CWE, and 3) at what stage do developers typically introduce this issue?",
+   "passage": "Multiple targeted artifacts (e.g., Windows unattended files, Git/Cloud app configs, browser stores) keep tokens/credentials in readable/plaintext files that Kazuar’s steal/unattend tasks exfiltrate.",
+   "report_id": "BLOG-84",
+   "report_title": "Over the Kazuar’s Nest: Cracking Down on a Freshly Hatched Backdoor Used by Pensive Ursa (Aka Turla)",
+   "gold_id": "CWE-312",
+   "gold_name": "Cleartext Storage of Sensitive Information",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-078",
+   "task": "vca",
+   "question": "I recently read in a security blog: 'The PoC embeds logic to fetch and run external scripts/binaries controlled by the attacker (remote batch/PowerShell and EXE), effectively including untrusted functionality at runtime.' Please provide: 1) the CWE category that maps to this vulnerability, 2) an explanation of how this vulnerability maps to the CWE, and 3) the potential mitigations for this type of vulnerability (what exact fix, such as code or configuration changes, could be applied)?",
+   "passage": "The PoC embeds logic to fetch and run external scripts/binaries controlled by the attacker (remote batch/PowerShell and EXE), effectively including untrusted functionality at runtime.",
+   "report_id": "BLOG-87",
+   "report_title": "Fake CVE-2023-40477 Proof of Concept Leads to VenomRAT",
+   "gold_id": "CWE-829",
+   "gold_name": "Inclusion of Functionality from Untrusted Control Sphere",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-083",
+   "task": "vca",
+   "question": "I recently read in a security blog: 'Attackers obtained sensitive data (usernames, hashed passwords, PII, security Q/A) after exploiting CitrixBleed, resulting in unauthorized disclosure of customer information.' Please provide: 1) the CWE category that maps to this vulnerability, 2) an explanation of how this vulnerability maps to the CWE, and 3) what are the detection methods for this type of vulnerability. Do we need manual testing or red-team activity to confirm?",
+   "passage": "Attackers obtained sensitive data (usernames, hashed passwords, PII, security Q/A) after exploiting CitrixBleed, resulting in unauthorized disclosure of customer information.",
+   "report_id": "BLOG-92",
+   "report_title": "Comcast Xfinity Breached via CitrixBleed; 35M Customers Affected",
+   "gold_id": "CWE-200",
+   "gold_name": "Exposure of Sensitive Information to an Unauthorized Actor",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-092",
+   "task": "vca",
+   "question": "I recently read in a security blog: \"CVE-2023-36884 allowed crafted Office documents to bypass Mark of the Web/Protected View, suppressing security warnings and enabling remote code execution.\" Please provide: 1)",
+   "passage": "CVE-2023-36884 allowed crafted Office documents to bypass Mark of the Web/Protected View, suppressing security warnings and enabling remote code execution.",
+   "report_id": "BLOG-1",
+   "report_title": "Flash Notice: Two Microsoft Zero-Day Vulnerabilities Exploited by Attackers",
+   "gold_id": "CWE-693",
+   "gold_name": "Protection Mechanism Failure",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-127",
+   "task": "vca",
+   "question": "I recently read in a security blog: \"could potentially lead to Distributed Denial of Service (DDoS) attacks on .NET applications and Visual Studio.\". Please provide: 1) the CWE category that maps to this vulnerability, 2) an explanation of the mapping, and 3) potential mitigations.",
+   "passage": "could potentially lead to Distributed Denial of Service (DDoS) attacks on .NET applications and Visual Studio.",
+   "report_id": "BLOG-1",
+   "report_title": "Flash Notice: Two Microsoft Zero-Day Vulnerabilities Exploited by Attackers",
+   "gold_id": "CWE-400",
+   "gold_name": "Uncontrolled Resource Consumption",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-169",
+   "task": "vca",
+   "question": "I recently read in a security blog: \"It uses the SMTP and IMAP (email) protocols for C&C communications.\" Please provide: 1) the CWE category",
+   "passage": "It uses the SMTP and IMAP (email) protocols for C&C communications.",
+   "report_id": "BLOG-210",
+   "report_title": "MoustachedBouncer: Espionage against foreign diplomats in Belarus",
+   "gold_id": "CWE-319",
+   "gold_name": "Cleartext Transmission of Sensitive Information",
+   "target_type": "CWE"
+  },
+  {
+   "id": "vca-209",
+   "task": "vca",
+   "question": "I recently read in a security blog: \"The issue, tracked as CVE-2024-20720 (CVSS score of 9.1), is described as an OS command injection flaw leading to arbitrary code execution without user interaction.\" Please provide: 1) the CWE category",
+   "passage": "The issue, tracked as CVE-2024-20720 (CVSS score of 9.1), is described as an OS command injection flaw leading to arbitrary code execution without user interaction.",
+   "report_id": "BLOG-117",
+   "report_title": "Magento Vulnerability Exploited to Deploy Persistent Backdoor - SecurityWeek",
+   "gold_id": "CWE-78",
+   "gold_name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+   "target_type": "CWE"
+  }
+ ]
+}
