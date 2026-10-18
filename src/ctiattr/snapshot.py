@@ -43,6 +43,7 @@ class CapecRecord:
     description: str
     cwes: tuple[str, ...]
     techniques: tuple[str, ...]
+    technique_names: tuple[str, ...] = ()   # CAPEC's own Entry_Name for each ATT&CK link
 
 
 @dataclass(frozen=True)
@@ -50,6 +51,7 @@ class CveRecord:
     id: str
     description: str
     cwes: tuple[str, ...]
+    primary: tuple[str, ...] = ()           # CWEs NVD lists as the Primary weakness
 
 
 @dataclass
@@ -128,6 +130,8 @@ class Snapshot:
             cwes = tuple(dict.fromkeys(f"CWE-{w['@CWE_ID']}" for w in _as_list(rw)
                                        if f"CWE-{w['@CWE_ID']}" in self.cwe_ids))
             tm = (c.get("Taxonomy_Mappings") or {}).get("Taxonomy_Mapping")
+            tnames = dict((f"T{m['Entry_ID']}", m.get("Entry_Name") or "") for m in reversed(_as_list(tm))
+                          if m.get("@Taxonomy_Name") == "ATTACK" and f"T{m.get('Entry_ID')}" in self.technique_ids)
             techs = tuple(dict.fromkeys(f"T{m['Entry_ID']}" for m in _as_list(tm)
                                         if m.get("@Taxonomy_Name") == "ATTACK"
                                         and f"T{m.get('Entry_ID')}" in self.technique_ids))
@@ -135,7 +139,7 @@ class Snapshot:
             if not isinstance(desc, str):
                 desc = json.dumps(desc)
             out.append(CapecRecord(f"CAPEC-{r['capec_id']}", c.get("@Name") or r.get("title", ""),
-                                   desc, cwes, techs))
+                                   desc, cwes, techs, tuple(tnames[t] for t in techs)))
         return out
 
     # --- CVE ----------------------------------------------------------------
@@ -149,6 +153,8 @@ class Snapshot:
             cwes = sorted({d["value"] for w in c.get("weaknesses") or []
                            for d in w.get("description") or []
                            if d.get("value", "").upper() in self.cwe_ids})
+            primary = sorted({d["value"] for w in c.get("weaknesses") or [] if w.get("type") == "Primary"
+                              for d in w.get("description") or [] if d.get("value", "") in cwes})
             if desc and cwes:
-                out.append(CveRecord(r["cve_id"], desc, tuple(cwes)))
+                out.append(CveRecord(r["cve_id"], desc, tuple(cwes), tuple(primary)))
         return out

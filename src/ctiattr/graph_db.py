@@ -16,6 +16,7 @@ from collections.abc import Iterable
 import numpy as np
 from neo4j import GraphDatabase
 
+from ctiattr import provenance as pv
 from ctiattr.config import ROOT, RAW
 from ctiattr.retrieval import Embedder
 from ctiattr.snapshot import Snapshot
@@ -136,8 +137,52 @@ class GraphDB:
                     [{"id": f"{b['chunk_id']}@{i}", "chunk_id": b["chunk_id"], "report_id": b["report_id"],
                       "behavior": b["behavior"], "tech": b["technique_id"], "vec": beh_vec[i].tolist()}
                      for i, b in enumerate(ttps)])
+        self.annotate(s, emb)
         self.run("CALL db.awaitIndexes(600)")
         return self.counts()
+
+    # --- provenance and confidence (ctiattr.provenance) ----------------------
+
+    def annotate(self, s: Snapshot, emb: Embedder) -> dict:
+        """Write source, method, loaded_at and confidence on every relationship, plus :Source nodes."""
+        self._write("UNWIND $rows AS r MERGE (x:Source {id: r.id}) SET x += r", pv.sources())
+        for rel, (src, method, how) in pv.EDGE_PROVENANCE.items():
+            conf = None if method == "extracted" else 1.0
+            self.run(f"""MATCH ()-[e:{rel}]->() SET e.source = $src, e.method = $method, e.derivation = $how,
+                e.loaded_at = datetime(), e.confidence = coalesce($conf, e.confidence)""",
+                     src=src, method=method, how=how, conf=conf)
+
+        # NVD weakness type; CAPEC's own name for each ATT&CK link (low agreement = stale mapping)
+        self._write("""UNWIND $rows AS r MATCH (:CVE {id: r.cve})-[e:HAS_WEAKNESS]->(:CWE {id: r.cwe})
+            SET e.weakness_type = r.type""",
+                    [{"cve": c.id, "cwe": w, "type": "Primary" if w in c.primary else "Secondary"}
+                     for c in s.cve for w in c.cwes])
+        title = {e.doc_id: e.title for e in s.mitre}
+        self._write("""UNWIND $rows AS r MATCH (:CAPEC {id: r.capec})-[e:MAPS_TO_TECHNIQUE]->(:AttackTechnique {id: r.tech})
+            SET e.capec_entry_name = r.name, e.name_agreement = r.agree""",
+                    [{"capec": c.id, "tech": t, "name": n,
+                      "agree": pv.name_agreement(n, title[t], title.get(s.parent(t) or ""))}
+                     for c in s.capec for t, n in zip(c.techniques, c.technique_names)])
+
+        # LLM-extracted edges: model, prompt, date, report span, soft signals, tier confidence
+        build = json.loads((DERIVED / "report_layer_build.json").read_text())
+        ttps = [json.loads(l) for l in (DERIVED / "report_ttps.jsonl").open()]
+        chunks = {c["chunk_id"]: c for c in map(json.loads, (DERIVED / "report_chunks.jsonl").open())}
+        sig = pv.extraction_signals(s, emb, ttps, chunks)
+        prec = pv.audit_precision()
+        self._write("""UNWIND $rows AS r MATCH (k:ReportChunk)-[h:HAS_BEHAVIOR]->(b:ReportBehavior {id: r.id})-[g:GROUNDS]->()
+            SET h.start = r.start, h.end = r.end, b.start = r.start, b.end = r.end,
+                g.model = r.model, g.prompt = r.prompt, g.extracted_on = date(r.on),
+                g.validated = ['id_in_snapshot', 'verbatim_in_chunk'], g.model_name = r.name,
+                g.name_agreement = r.agree, g.sem_rank = r.rank, g.sem_cos = r.cos, g.tier = r.tier,
+                g.confidence = r.conf, g.confidence_basis = r.basis""",
+                    [{"id": f"{b['chunk_id']}@{i}", "start": x.start, "end": x.end, "model": build["model"],
+                      "prompt": "CTIFoundry App. G.3 TTP prompt", "on": build["built_on"], "name": b["technique_name"],
+                      "agree": x.name_agreement, "rank": x.sem_rank, "cos": x.sem_cos, "tier": x.tier,
+                      "conf": prec.get(x.tier, {}).get("precision"),
+                      "basis": f"audit precision of tier '{x.tier}' (n={prec[x.tier]['n']})" if x.tier in prec else None}
+                     for i, (b, x) in enumerate(zip(ttps, sig))])
+        return {"audit": prec}
 
     def counts(self) -> dict:
         nodes = {r["label"]: r["n"] for r in self.run(

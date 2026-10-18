@@ -29,6 +29,7 @@ uv run python scripts/build_report_layer.py --model gpt-5.4-mini-2026-03-17   # 
 uv run python scripts/load_graph.py --wipe          # applies schema.cypher, loads nodes, edges, vectors
 uv run python scripts/check_graph_bridges.py        # Cypher candidates vs the in-memory reference
 uv run python scripts/gds_analysis.py               # gds.cypher: degree, WCC, PageRank, Louvain, betweenness
+uv run python scripts/extraction_audit.py score     # report-layer precision per confidence tier
 ```
 
 ## Run and evaluate
@@ -53,6 +54,7 @@ The 306-question test split is reserved for the final evaluation.
 | Neo4j loader and Cypher candidate bridges | `scripts/load_graph.py`, `src/ctiattr/graph_db.py` |
 | Snapshot-derived rules R1–R6 and candidate generators | `src/ctiattr/snapshot.py`, `src/ctiattr/candidates.py` |
 | LLM extraction prompt (report layer) and validator | `src/ctiattr/report_layer.py`, `data/derived/` |
+| Edge provenance, extraction confidence tiers and their audit | `src/ctiattr/provenance.py`, `scripts/extraction_audit.py`, `data/derived/extraction_audit.csv` |
 | Graph embeddings (propagated text, node2vec) | `src/ctiattr/graph_embed.py` |
 | Graph Data Science: projection, PageRank, Louvain, WCC, betweenness, paths | `gds.cypher`, `src/ctiattr/gds.py`, `scripts/gds_analysis.py` |
 | Attribution engine (SGS) and baselines (CB, VR, DtR) | `src/ctiattr/sgs.py`, `src/ctiattr/baselines.py` |
@@ -61,7 +63,7 @@ The 306-question test split is reserved for the final evaluation.
 | Gold triples (69) and eval queries (20) | `data/gold_triples.json`, `data/eval_queries.json` |
 | Dev/test split by report | `data/splits/split_v1.json` |
 | Triple verification, RAGAS, recall diagnostics | `scripts/verify_triples.py`, `scripts/ragas_eval.py`, `scripts/*_recall.py` |
-| Parser and model tests (41) | `tests/` |
+| Parser and model tests (46) | `tests/` |
 | Development-split results kept for the final report | `results/dev_results.md`, `reports/design_doc_rev81_with_results.md` |
 
 Not built yet: the FastAPI service and Streamlit chatbot specified in Section 8 of the design document.

@@ -1,5 +1,6 @@
 {
  "model": "gpt-5.4-mini-2026-03-17",
+ "built_on": "2026-10-17",
  "chunks": 650,
  "extracted": 3741,
  "kept": 3512,

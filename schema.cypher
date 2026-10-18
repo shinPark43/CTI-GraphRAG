@@ -24,6 +24,11 @@ CREATE INDEX technique_title IF NOT EXISTS FOR (t:AttackTechnique) ON (t.title_n
 CREATE INDEX cwe_title IF NOT EXISTS FOR (w:CWE) ON (w.title_norm);
 CREATE INDEX technique_domain IF NOT EXISTS FOR (t:AttackTechnique) ON (t.domain);
 CREATE INDEX chunk_report IF NOT EXISTS FOR (k:ReportChunk) ON (k.report_id);
+CREATE CONSTRAINT source_id IF NOT EXISTS FOR (s:Source) REQUIRE s.id IS UNIQUE;
+// edge provenance (ctiattr.provenance): every relationship carries source, method,
+// derivation, loaded_at and confidence; GROUNDS adds model, prompt, extracted_on,
+// tier and the soft signals behind its confidence
+CREATE INDEX grounds_confidence IF NOT EXISTS FOR ()-[g:GROUNDS]-() ON (g.confidence);
 
 // ---------------------------------------------------------------------
 // 3. Vector indexes: text-embedding-3-large, 3,072 dimensions, cosine

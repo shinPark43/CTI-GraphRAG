@@ -12,6 +12,7 @@ question's own source report.
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import threading
 from collections import Counter
@@ -87,7 +88,7 @@ def main() -> None:
         fam += any(b.technique_id.split(".")[0] == g.split(".")[0] for b in others)
     print(f"Coverage (dev ATA, n={len(ata)}, own report excluded): gold technique has >=1 example "
           f"{exact}/{len(ata)}; same technique family {fam}/{len(ata)}")
-    log = {"model": args.model, "chunks": len(chunks), "extracted": raw_n, "kept": len(kept),
+    log = {"model": args.model, "built_on": datetime.date.today().isoformat(), "chunks": len(chunks), "extracted": raw_n, "kept": len(kept),
            "dropped": dict(drops), "dev_ata_exact_coverage": f"{exact}/{len(ata)}",
            "dev_ata_family_coverage": f"{fam}/{len(ata)}"}
     (OUT / "report_layer_build.json").write_text(json.dumps(log, indent=1) + "\n")

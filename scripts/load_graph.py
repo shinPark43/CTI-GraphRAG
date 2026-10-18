@@ -7,6 +7,7 @@ Neo4j 5 runs locally in Docker (credentials in .env):
         -e NEO4J_AUTH=neo4j/<password> -e NEO4J_PLUGINS='["graph-data-science","apoc"]' \\
         -v cti-neo4j-data:/data neo4j:5.26
     uv run python scripts/load_graph.py --wipe
+    uv run python scripts/load_graph.py --annotate-only   # after relabelling the extraction audit
 
 Embeddings come from the on-disk cache (no API calls once the indexes are built).
 """
@@ -30,9 +31,15 @@ EXPECTED_RELS = {"SUBTECHNIQUE_OF": 518, "IN_TACTIC": 1374, "REPLACED_BY": 103, 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--wipe", action="store_true", help="delete all nodes first")
+    ap.add_argument("--annotate-only", action="store_true",
+                    help="only (re)write edge provenance and confidence on an already loaded graph")
     args = ap.parse_args()
     db = GraphDB()
     t0 = time.time()
+    if args.annotate_only:
+        out = db.annotate(Snapshot(), Embedder(EmbedConfig.from_env()))
+        print(f"provenance written in {time.time() - t0:.0f}s; audit tiers: {json.dumps(out['audit'])}")
+        return db.close()
     if args.wipe:
         db.wipe()
     print(f"schema.cypher: {db.apply_schema()} statements applied")

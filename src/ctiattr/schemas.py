@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -53,6 +54,10 @@ class GraphEdge(BaseModel):
     target_id: str
     predicate: Predicate
     origin: str = Field(..., description='"corpus_kb", "report_layer" or "rule:R<n>"')
+    method: Literal["asserted", "derived", "segmented", "extracted"] = "asserted"
+    confidence: float | None = Field(None, ge=0, le=1, description="1.0 unless extracted; then the audit "
+                                                                    "precision of the edge's tier")
+    tier: Literal["supported", "context", "conflict"] | None = None
 
 
 # --- report layer -----------------------------------------------------------

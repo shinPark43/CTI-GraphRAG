@@ -94,3 +94,43 @@ So PageRank works as a base-rate prior for VCA, learned from the knowledge base'
 Leak check: no dev VCA passage is a near-duplicate of a corpus_kb CVE (median best cosine 0.48,
 none > 0.9) and none names a KB CVE. Compared with graph embedding A (ATA 0.80, VCA 0.70 @5), GDS
 signals mostly sharpen the top of the list (VCA @1 0.16 → 0.35 with SGS).
+
+## Edge provenance and extraction confidence
+
+`src/ctiattr/provenance.py`, written by `scripts/load_graph.py` (`--annotate-only` re-runs just this step).
+Every relationship carries `source` (a `:Source` node: the CTIConnect snapshot at its pinned commit,
+snapshot date 2025-09-01, or the report-layer build), `method`, `derivation`, `loaded_at` and `confidence`.
+
+| Method | Relationships | Confidence |
+| --- | --- | --- |
+| asserted (stated in a corpus_kb record) | IN_TACTIC 1,374, EXPLOITS_WEAKNESS 1,212, MAPS_TO_TECHNIQUE 271, HAS_WEAKNESS 3,286 | 1.0 |
+| derived (rule over corpus_kb) | SUBTECHNIQUE_OF 518, REPLACED_BY 103 | 1.0 |
+| segmented (report chunking) | HAS_CHUNK 650, HAS_BEHAVIOR 3,512 | 1.0 |
+| extracted (LLM, gpt-5.4-mini, 2026-10-17) | GROUNDS 3,512 | audit precision of its tier |
+
+Extra edge properties: HAS_WEAKNESS has NVD `weakness_type` (1,882 Primary, 1,404 Secondary);
+MAPS_TO_TECHNIQUE has CAPEC's own `capec_entry_name` and its agreement with the current ATT&CK
+title (1 of 271 looks stale: CAPEC-662 "Man in the Browser" → T1185 "Browser Session Hijacking");
+HAS_BEHAVIOR and ReportBehavior have the behavior's character span in the report (3,512 of 3,512
+resolve to the exact text).
+
+**Extraction confidence.** Each GROUNDS edge passed the hard checks (ID in the snapshot, phrase
+verbatim in its chunk; 6 unknown-ID and 223 non-verbatim records were dropped of 3,741). Two soft
+signals sort it into a tier: agreement between the name the model wrote and the official title
+of the ID it gave (low = likely wrong ID), and the technique's rank for the behavior phrase alone
+by embedding (high = meaning comes from context). Tier precision from a stratified hand audit
+(`data/derived/extraction_audit.csv`, 25 per tier, seed 6338; first-pass labels by Claude,
+to be checked by the author):
+
+| Tier | Rule | Edges | Precision (Wilson 95%) |
+| --- | --- | --- | --- |
+| supported | name agreement ≥ 0.6, rank ≤ 50 | 2,488 (70.8%) | 0.76 [0.57, 0.89] (19/25) |
+| context | name agreement ≥ 0.6, rank > 50 | 934 (26.6%) | 0.24 [0.12, 0.43] (6/25) |
+| conflict | name agreement < 0.6 | 90 (2.6%) | 0.32 [0.17, 0.52] (8/25) |
+
+Estimated report-layer precision, tier-weighted: **0.61**. Typical errors: a sibling sub-technique
+(HTML smuggling → T1027.016 instead of .006; Java → T1059.006 Python), vague phrases mapped to a
+technique ("initial access" → T1190), and defender actions taken as attacker behavior. Conflicts
+are partly ATT&CK renames (T1574.001 is now "DLL"; extortion is inside T1657), so name
+disagreement alone is not an error. SGS still uses every edge unweighted; confidence-weighted
+votes are a follow-up.
