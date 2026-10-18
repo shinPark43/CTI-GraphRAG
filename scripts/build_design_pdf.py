@@ -42,7 +42,7 @@ pre code { font-size: 7.4pt; line-height: 1.25; }
 h3#references + ul { font-size: 8.5pt; line-height: 1.25; }
 .math { margin: 4pt 0 8pt; text-align: center; font-size: 10pt; break-inside: avoid; }
 pre.mermaid { background: none; border: none; text-align: center; padding: 0; break-inside: avoid; }
-pre.mermaid svg { max-width: 100% !important; max-height: 2.8in; }
+pre.mermaid svg { width: 100% !important; max-width: 100% !important; height: auto; max-height: 7.5in; }
 figure { margin: 6pt 0 8pt; text-align: center; break-inside: avoid; }
 figure img { width: 70%; }
 figcaption { font-size: 8.5pt; color: #555; }
@@ -70,7 +70,7 @@ def build(export: Path, diagram: Path, out: Path, author: str, date: str) -> Non
 <style>{CSS}</style></head><body>{html}
 <script>
 document.querySelectorAll('.math').forEach(el => katex.render(el.textContent, el, {{displayMode: true, throwOnError: false}}));
-mermaid.initialize({{startOnLoad: false, theme: 'neutral', fontFamily: 'Helvetica, Arial, sans-serif'}});
+mermaid.initialize({{startOnLoad: false, theme: "neutral", fontFamily: "Helvetica, Arial, sans-serif", themeVariables: {{fontSize: "15px"}}, classDiagram: {{useMaxWidth: true}}}});
 mermaid.run({{querySelector: 'pre.mermaid'}});
 </script></body></html>"""
     with tempfile.TemporaryDirectory() as tmp:
