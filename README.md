@@ -106,3 +106,5 @@ and the **LLM calls**. Example questions come from the development split only.
 | Triple verification, RAGAS, recall diagnostics | `scripts/verify_triples.py`, `scripts/ragas_eval.py`, `scripts/*_recall.py` |
 | Parser and model tests (56) | `tests/` |
 | Development-split results kept for the final report | `results/dev_results.md`, `reports/design_doc_rev81_with_results.md` |
+| Run outputs behind those results (predictions with full traces, scores, citations, analyses) | `runs/` (see `runs/README.md`) |
+| Identifier hallucination check | `scripts/hallucination_check.py` |

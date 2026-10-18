@@ -1,0 +1,756 @@
+{
+ "seconds": 0.8,
+ "graph": {
+  "graphName": "kb",
+  "nodeCount": 5803,
+  "relationshipCount": 13528
+ },
+ "louvain": {
+  "communityCount": 1149,
+  "modularity": 0.8638156058739328,
+  "ranLevels": 4
+ },
+ "wcc": {
+  "componentCount": 1116
+ },
+ "pagerank": {
+  "ranIterations": 4,
+  "didConverge": true
+ },
+ "degree_by_label": {
+  "AttackTechnique": {
+   "nodes": 1076,
+   "mean": 2.6830855018587365,
+   "median": 2.0,
+   "max": 20.0,
+   "isolated": 0
+  },
+  "Tactic": {
+   "nodes": 19,
+   "mean": 72.31578947368423,
+   "median": 53.0,
+   "max": 304.0,
+   "isolated": 0
+  },
+  "CWE": {
+   "nodes": 1342,
+   "mean": 3.351713859910583,
+   "median": 0.0,
+   "max": 317.0,
+   "isolated": 891
+  },
+  "CAPEC": {
+   "nodes": 615,
+   "mean": 2.411382113821136,
+   "median": 1.0,
+   "max": 17.0,
+   "isolated": 131
+  },
+  "CVE": {
+   "nodes": 2751,
+   "mean": 1.1944747364594717,
+   "median": 1.0,
+   "max": 4.0,
+   "isolated": 0
+  }
+ },
+ "components": [
+  {
+   "component": 0,
+   "size": 4451,
+   "labels": {
+    "AttackTechnique": 1066,
+    "Tactic": 17,
+    "CWE": 344,
+    "CAPEC": 459,
+    "CVE": 2565
+   }
+  },
+  {
+   "component": 1260,
+   "size": 22,
+   "labels": {
+    "CWE": 3,
+    "CAPEC": 2,
+    "CVE": 17
+   }
+  },
+  {
+   "component": 1936,
+   "size": 20,
+   "labels": {
+    "CWE": 2,
+    "CAPEC": 4,
+    "CVE": 14
+   }
+  },
+  {
+   "component": 1251,
+   "size": 10,
+   "labels": {
+    "CWE": 8,
+    "CAPEC": 2
+   }
+  },
+  {
+   "component": 1265,
+   "size": 9,
+   "labels": {
+    "CWE": 1,
+    "CVE": 8
+   }
+  }
+ ],
+ "pagerank_top": {
+  "AttackTechnique": [
+   {
+    "id": "T1195",
+    "title": "Supply Chain Compromise",
+    "pagerank": 1.7708
+   },
+   {
+    "id": "T1027",
+    "title": "Obfuscated Files or Information",
+    "pagerank": 1.5956
+   },
+   {
+    "id": "T1195.003",
+    "title": "Compromise Hardware Supply Chain",
+    "pagerank": 1.5525
+   },
+   {
+    "id": "T1036",
+    "title": "Masquerading",
+    "pagerank": 1.1877
+   },
+   {
+    "id": "T1218",
+    "title": "System Binary Proxy Execution",
+    "pagerank": 1.178
+   },
+   {
+    "id": "T1564",
+    "title": "Hide Artifacts",
+    "pagerank": 1.1468
+   },
+   {
+    "id": "T1546",
+    "title": "Event Triggered Execution",
+    "pagerank": 1.1163
+   },
+   {
+    "id": "T1547",
+    "title": "Boot or Logon Autostart Execution",
+    "pagerank": 1.0599
+   },
+   {
+    "id": "T1562",
+    "title": "Impair Defenses",
+    "pagerank": 1.0106
+   },
+   {
+    "id": "T1059",
+    "title": "Command and Scripting Interpreter",
+    "pagerank": 0.9692
+   }
+  ],
+  "CWE": [
+   {
+    "id": "CWE-79",
+    "title": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+    "pagerank": 37.6917
+   },
+   {
+    "id": "CWE-89",
+    "title": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+    "pagerank": 21.723
+   },
+   {
+    "id": "CWE-74",
+    "title": "Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+    "pagerank": 13.4421
+   },
+   {
+    "id": "CWE-200",
+    "title": "Exposure of Sensitive Information to an Unauthorized Actor",
+    "pagerank": 12.0784
+   },
+   {
+    "id": "CWE-787",
+    "title": "Out-of-bounds Write",
+    "pagerank": 10.8813
+   },
+   {
+    "id": "CWE-22",
+    "title": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+    "pagerank": 10.8676
+   },
+   {
+    "id": "CWE-125",
+    "title": "Out-of-bounds Read",
+    "pagerank": 10.5838
+   },
+   {
+    "id": "CWE-400",
+    "title": "Uncontrolled Resource Consumption",
+    "pagerank": 10.1375
+   },
+   {
+    "id": "CWE-284",
+    "title": "Improper Access Control",
+    "pagerank": 9.3502
+   },
+   {
+    "id": "CWE-20",
+    "title": "Improper Input Validation",
+    "pagerank": 9.2468
+   }
+  ],
+  "Tactic": [
+   {
+    "id": "defense-evasion",
+    "title": "defense-evasion",
+    "pagerank": 31.3494
+   },
+   {
+    "id": "persistence",
+    "title": "persistence",
+    "pagerank": 15.1302
+   },
+   {
+    "id": "credential-access",
+    "title": "credential-access",
+    "pagerank": 10.4769
+   },
+   {
+    "id": "privilege-escalation",
+    "title": "privilege-escalation",
+    "pagerank": 10.3612
+   },
+   {
+    "id": "command-and-control",
+    "title": "command-and-control",
+    "pagerank": 9.421
+   },
+   {
+    "id": "collection",
+    "title": "collection",
+    "pagerank": 9.0839
+   },
+   {
+    "id": "impact",
+    "title": "impact",
+    "pagerank": 8.9891
+   },
+   {
+    "id": "discovery",
+    "title": "discovery",
+    "pagerank": 8.8781
+   },
+   {
+    "id": "execution",
+    "title": "execution",
+    "pagerank": 8.2418
+   },
+   {
+    "id": "initial-access",
+    "title": "initial-access",
+    "pagerank": 8.199
+   }
+  ]
+ },
+ "betweenness_top": {
+  "CWE": [
+   {
+    "id": "CWE-20",
+    "title": "Improper Input Validation",
+    "betweenness": 3361381.43
+   },
+   {
+    "id": "CWE-79",
+    "title": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+    "betweenness": 1367728.637
+   },
+   {
+    "id": "CWE-200",
+    "title": "Exposure of Sensitive Information to an Unauthorized Actor",
+    "betweenness": 1225496.3888
+   },
+   {
+    "id": "CWE-74",
+    "title": "Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+    "betweenness": 1072723.969
+   },
+   {
+    "id": "CWE-285",
+    "title": "Improper Authorization",
+    "betweenness": 752032.5153
+   },
+   {
+    "id": "CWE-89",
+    "title": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+    "betweenness": 609224.1481
+   },
+   {
+    "id": "CWE-125",
+    "title": "Out-of-bounds Read",
+    "betweenness": 535479.3586
+   },
+   {
+    "id": "CWE-94",
+    "title": "Improper Control of Generation of Code ('Code Injection')",
+    "betweenness": 517486.7105
+   },
+   {
+    "id": "CWE-22",
+    "title": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+    "betweenness": 455691.7254
+   },
+   {
+    "id": "CWE-362",
+    "title": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')",
+    "betweenness": 453041.3211
+   }
+  ],
+  "CAPEC": [
+   {
+    "id": "CAPEC-13",
+    "title": "Subverting Environment Variable Values",
+    "betweenness": 1306691.1005
+   },
+   {
+    "id": "CAPEC-60",
+    "title": "Reusing Session IDs (aka Session Replay)",
+    "betweenness": 384194.9093
+   },
+   {
+    "id": "CAPEC-76",
+    "title": "Manipulating Web Input to File System Calls",
+    "betweenness": 341181.8903
+   },
+   {
+    "id": "CAPEC-22",
+    "title": "Exploiting Trust in Client",
+    "betweenness": 332712.2962
+   },
+   {
+    "id": "CAPEC-473",
+    "title": "Signature Spoof",
+    "betweenness": 330739.9218
+   },
+   {
+    "id": "CAPEC-31",
+    "title": "Accessing/Intercepting/Modifying HTTP Cookies",
+    "betweenness": 313971.3713
+   },
+   {
+    "id": "CAPEC-1",
+    "title": "Accessing Functionality Not Properly Constrained by ACLs",
+    "betweenness": 266555.0291
+   },
+   {
+    "id": "CAPEC-79",
+    "title": "Using Slashes in Alternate Encoding",
+    "betweenness": 260488.7111
+   },
+   {
+    "id": "CAPEC-35",
+    "title": "Leverage Executable Code in Non-Executable Files",
+    "betweenness": 257208.1197
+   },
+   {
+    "id": "CAPEC-267",
+    "title": "Leverage Alternate Encoding",
+    "betweenness": 252304.5749
+   }
+  ],
+  "AttackTechnique": [
+   {
+    "id": "T1574.007",
+    "title": "Path Interception by PATH Environment Variable",
+    "betweenness": 437387.1245
+   },
+   {
+    "id": "T1574.006",
+    "title": "Dynamic Linker Hijacking",
+    "betweenness": 432115.7638
+   },
+   {
+    "id": "T1027",
+    "title": "Obfuscated Files or Information",
+    "betweenness": 293289.0603
+   },
+   {
+    "id": "T1574.010",
+    "title": "Services File Permissions Weakness",
+    "betweenness": 190094.8065
+   },
+   {
+    "id": "T1553.002",
+    "title": "Code Signing",
+    "betweenness": 166022.8453
+   },
+   {
+    "id": "T1562.003",
+    "title": "Impair Command History Logging",
+    "betweenness": 157340.1242
+   },
+   {
+    "id": "T1539",
+    "title": "Steal Web Session Cookie",
+    "betweenness": 140574.446
+   },
+   {
+    "id": "T1584.002",
+    "title": "DNS Server",
+    "betweenness": 129145.1285
+   },
+   {
+    "id": "T1205",
+    "title": "Traffic Signaling",
+    "betweenness": 115570.7909
+   },
+   {
+    "id": "T1205.002",
+    "title": "Socket Filters",
+    "betweenness": 115570.5409
+   }
+  ]
+ },
+ "communities": [
+  {
+   "community": 2587,
+   "size": 384,
+   "labels": {
+    "CWE": 5,
+    "CAPEC": 8,
+    "CVE": 371
+   },
+   "leaders": {
+    "CWE": [
+     "CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+     "CWE-94 Improper Control of Generation of Code ('Code Injection')",
+     "CWE-601 URL Redirection to Untrusted Site ('Open Redirect')"
+    ],
+    "CAPEC": [
+     "CAPEC-178 Cross-Site Flashing",
+     "CAPEC-18 XSS Targeting Non-Script Elements",
+     "CAPEC-193 PHP Remote File Inclusion"
+    ],
+    "CVE": [
+     "CVE-2017-18524 ",
+     "CVE-2024-22854 ",
+     "CVE-2024-1529 "
+    ]
+   }
+  },
+  {
+   "community": 3031,
+   "size": 361,
+   "labels": {
+    "CWE": 52,
+    "CAPEC": 58,
+    "CVE": 251
+   },
+   "leaders": {
+    "CWE": [
+     "CWE-20 Improper Input Validation",
+     "CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+     "CWE-77 Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+    ],
+    "CAPEC": [
+     "CAPEC-104 Cross Zone Scripting",
+     "CAPEC-109 Object Relational Mapping Injection",
+     "CAPEC-110 SQL Injection through SOAP Parameter Tampering"
+    ],
+    "CVE": [
+     "CVE-2022-47378 ",
+     "CVE-2022-47391 ",
+     "CVE-2022-47392 "
+    ]
+   }
+  },
+  {
+   "community": 1077,
+   "size": 327,
+   "labels": {
+    "Tactic": 3,
+    "CWE": 6,
+    "AttackTechnique": 276,
+    "CAPEC": 29,
+    "CVE": 13
+   },
+   "leaders": {
+    "Tactic": [
+     "persistence persistence",
+     "privilege-escalation privilege-escalation",
+     "execution execution"
+    ],
+    "CWE": [
+     "CWE-1021 Improper Restriction of Rendered UI Layers or Frames",
+     "CWE-15 External Control of System or Configuration Setting",
+     "CWE-427 Uncontrolled Search Path Element"
+    ],
+    "AttackTechnique": [
+     "T1546 Event Triggered Execution",
+     "T1547 Boot or Logon Autostart Execution",
+     "T1059 Command and Scripting Interpreter"
+    ],
+    "CAPEC": [
+     "CAPEC-103 Clickjacking",
+     "CAPEC-115 Authentication Bypass",
+     "CAPEC-132 Symlink Attack"
+    ],
+    "CVE": [
+     "CVE-2024-4326 ",
+     "CVE-2025-27743 ",
+     "CVE-2025-29802 "
+    ]
+   }
+  },
+  {
+   "community": 2444,
+   "size": 278,
+   "labels": {
+    "CWE": 8,
+    "CAPEC": 7,
+    "CVE": 263
+   },
+   "leaders": {
+    "CWE": [
+     "CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+     "CWE-74 Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+     "CWE-444 Inconsistent Interpretation of HTTP Requests ('HTTP Request/Response Smuggling')"
+    ],
+    "CAPEC": [
+     "CAPEC-105 HTTP Request Splitting",
+     "CAPEC-108 Command Line Execution through SQL Injection",
+     "CAPEC-273 HTTP Response Smuggling"
+    ],
+    "CVE": [
+     "CVE-2024-32638 ",
+     "CVE-2024-33911 ",
+     "CVE-2023-51586 "
+    ]
+   }
+  },
+  {
+   "community": 3096,
+   "size": 231,
+   "labels": {
+    "CWE": 11,
+    "CAPEC": 3,
+    "CVE": 217
+   },
+   "leaders": {
+    "CWE": [
+     "CWE-125 Out-of-bounds Read",
+     "CWE-122 Heap-based Buffer Overflow",
+     "CWE-476 NULL Pointer Dereference"
+    ],
+    "CAPEC": [
+     "CAPEC-128 Integer Attacks",
+     "CAPEC-129 Pointer Manipulation",
+     "CAPEC-540 Overread Buffers"
+    ],
+    "CVE": [
+     "CVE-2017-5977 ",
+     "CVE-2017-5978 ",
+     "CVE-2017-5979 "
+    ]
+   }
+  },
+  {
+   "community": 66,
+   "size": 228,
+   "labels": {
+    "Tactic": 1,
+    "AttackTechnique": 191,
+    "CWE": 7,
+    "CAPEC": 28,
+    "CVE": 1
+   },
+   "leaders": {
+    "Tactic": [
+     "defense-evasion defense-evasion"
+    ],
+    "AttackTechnique": [
+     "T1027 Obfuscated Files or Information",
+     "T1036 Masquerading",
+     "T1218 System Binary Proxy Execution"
+    ],
+    "CWE": [
+     "CWE-757 Selection of Less-Secure Algorithm During Negotiation ('Algorithm Downgrade')",
+     "CWE-706 Use of Incorrectly-Resolved Name or Reference",
+     "CWE-430 Deployment of Wrong Handler"
+    ],
+    "CAPEC": [
+     "CAPEC-11 Cause Web Server Misclassification",
+     "CAPEC-13 Subverting Environment Variable Values",
+     "CAPEC-159 Redirect Access to Libraries"
+    ],
+    "CVE": [
+     "CVE-2025-3946 "
+    ]
+   }
+  },
+  {
+   "community": 1078,
+   "size": 190,
+   "labels": {
+    "Tactic": 2,
+    "AttackTechnique": 148,
+    "CWE": 14,
+    "CAPEC": 22,
+    "CVE": 4
+   },
+   "leaders": {
+    "Tactic": [
+     "credential-access credential-access",
+     "collection collection"
+    ],
+    "AttackTechnique": [
+     "T1552 Unsecured Credentials",
+     "T1003 OS Credential Dumping",
+     "T1555 Credentials from Password Stores"
+    ],
+    "CWE": [
+     "CWE-267 Privilege Defined With Unsafe Actions",
+     "CWE-1323 Improper Management of Sensitive Trace Data",
+     "CWE-1278 Missing Protection Against Hardware Reverse Engineering Using Integrated Circuit (IC) Imaging Techniques"
+    ],
+    "CAPEC": [
+     "CAPEC-116 Excavation",
+     "CAPEC-150 Collect Data from Common Resource Locations",
+     "CAPEC-167 White Box Reverse Engineering"
+    ],
+    "CVE": [
+     "CVE-2025-23015 ",
+     "CVE-2025-7030 ",
+     "CVE-2025-47811 "
+    ]
+   }
+  },
+  {
+   "community": 2526,
+   "size": 181,
+   "labels": {
+    "Tactic": 2,
+    "AttackTechnique": 94,
+    "CWE": 9,
+    "CAPEC": 64,
+    "CVE": 12
+   },
+   "leaders": {
+    "Tactic": [
+     "initial-access initial-access",
+     "lateral-movement lateral-movement"
+    ],
+    "AttackTechnique": [
+     "T1195 Supply Chain Compromise",
+     "T1195.003 Compromise Hardware Supply Chain",
+     "T1195.002 Compromise Software Supply Chain"
+    ],
+    "CWE": [
+     "CWE-829 Inclusion of Functionality from Untrusted Control Sphere",
+     "CWE-201 Insertion of Sensitive Information Into Sent Data",
+     "CWE-494 Download of Code Without Integrity Check"
+    ],
+    "CAPEC": [
+     "CAPEC-12 Choosing Message Identifier",
+     "CAPEC-154 Resource Location Spoofing",
+     "CAPEC-164 Mobile Phishing"
+    ],
+    "CVE": [
+     "CVE-2024-50378 ",
+     "CVE-2025-29796 ",
+     "CVE-2025-47775 "
+    ]
+   }
+  },
+  {
+   "community": 2522,
+   "size": 169,
+   "labels": {
+    "CWE": 2,
+    "Tactic": 1,
+    "AttackTechnique": 60,
+    "CAPEC": 51,
+    "CVE": 55
+   },
+   "leaders": {
+    "CWE": [
+     "CWE-200 Exposure of Sensitive Information to an Unauthorized Actor",
+     "CWE-497 Exposure of Sensitive System Information to an Unauthorized Control Sphere"
+    ],
+    "Tactic": [
+     "discovery discovery"
+    ],
+    "AttackTechnique": [
+     "T1087 Account Discovery",
+     "T1069 Permission Groups Discovery",
+     "T1518.001 Security Software Discovery"
+    ],
+    "CAPEC": [
+     "CAPEC-170 Web Application Fingerprinting",
+     "CAPEC-224 Fingerprinting",
+     "CAPEC-285 ICMP Echo Request Ping"
+    ],
+    "CVE": [
+     "CVE-2024-27905 ",
+     "CVE-2024-25591 ",
+     "CVE-2024-1968 "
+    ]
+   }
+  },
+  {
+   "community": 3194,
+   "size": 165,
+   "labels": {
+    "CWE": 13,
+    "CAPEC": 16,
+    "CVE": 136
+   },
+   "leaders": {
+    "CWE": [
+     "CWE-119 Improper Restriction of Operations within the Bounds of a Memory Buffer",
+     "CWE-121 Stack-based Buffer Overflow",
+     "CWE-120 Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')"
+    ],
+    "CAPEC": [
+     "CAPEC-10 Buffer Overflow via Environment Variables",
+     "CAPEC-100 Overflow Buffers",
+     "CAPEC-123 Buffer Manipulation"
+    ],
+    "CVE": [
+     "CVE-2017-5974 ",
+     "CVE-2018-6381 ",
+     "CVE-2018-7725 "
+    ]
+   }
+  }
+ ],
+ "community_tactic_alignment": {
+  "techniques": 1076,
+  "aligned": 854,
+  "share": 0.794
+ },
+ "bridges": {
+  "cwe_total": 1342,
+  "cwe_with_cve": 260,
+  "cwe_with_capec": 336,
+  "cwe_reaching_technique": 149,
+  "technique_total": 1076,
+  "technique_with_capec": 189,
+  "cve_to_technique_paths": 7866
+ },
+ "example_path": {
+  "hops": 3.0,
+  "nodes": [
+   "CVE-2020-12790",
+   "CWE-74",
+   "CAPEC-13",
+   "T1562.003"
+  ]
+ }
+}

@@ -1,0 +1,210 @@
+{
+ "dev__closed_book__llama3-8b-fp16": {
+  "all": {
+   "answers": 73,
+   "fabricated": 0.096,
+   "no_id": 0.068,
+   "hedged": 0.11,
+   "ids": 79,
+   "fabricated_ids": 7,
+   "examples": [
+    {
+     "id": "ata-024",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1608.001"
+     ]
+    },
+    {
+     "id": "ata-027",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1598.003"
+     ]
+    },
+    {
+     "id": "ata-031",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1566.002"
+     ]
+    },
+    {
+     "id": "ata-049",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1027.012"
+     ]
+    },
+    {
+     "id": "ata-071",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1566"
+     ]
+    }
+   ]
+  },
+  "ata": {
+   "answers": 30,
+   "fabricated": 0.233,
+   "no_id": 0.1,
+   "hedged": 0.167,
+   "ids": 35,
+   "fabricated_ids": 7,
+   "examples": [
+    {
+     "id": "ata-024",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1608.001"
+     ]
+    },
+    {
+     "id": "ata-027",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1598.003"
+     ]
+    },
+    {
+     "id": "ata-031",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1566.002"
+     ]
+    },
+    {
+     "id": "ata-049",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1027.012"
+     ]
+    },
+    {
+     "id": "ata-071",
+     "fabricated": [
+      "T1193.001"
+     ],
+     "gold": [
+      "T1566"
+     ]
+    }
+   ]
+  },
+  "vca": {
+   "answers": 43,
+   "fabricated": 0.0,
+   "no_id": 0.047,
+   "hedged": 0.07,
+   "ids": 44,
+   "fabricated_ids": 0,
+   "examples": []
+  }
+ },
+ "dev__vanilla_rag__llama3-8b-fp16": {
+  "all": {
+   "answers": 73,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.233,
+   "ids": 137,
+   "fabricated_ids": 0,
+   "examples": []
+  },
+  "ata": {
+   "answers": 30,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.167,
+   "ids": 50,
+   "fabricated_ids": 0,
+   "examples": []
+  },
+  "vca": {
+   "answers": 43,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.279,
+   "ids": 87,
+   "fabricated_ids": 0,
+   "examples": []
+  }
+ },
+ "dev__sgs__llama3-8b-fp16": {
+  "all": {
+   "answers": 73,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.0,
+   "ids": 73,
+   "fabricated_ids": 0,
+   "examples": []
+  },
+  "ata": {
+   "answers": 30,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.0,
+   "ids": 30,
+   "fabricated_ids": 0,
+   "examples": []
+  },
+  "vca": {
+   "answers": 43,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.0,
+   "ids": 43,
+   "fabricated_ids": 0,
+   "examples": []
+  }
+ },
+ "dev__sgs-neo4j__llama3-8b-fp16": {
+  "all": {
+   "answers": 73,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.0,
+   "ids": 73,
+   "fabricated_ids": 0,
+   "examples": []
+  },
+  "ata": {
+   "answers": 30,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.0,
+   "ids": 30,
+   "fabricated_ids": 0,
+   "examples": []
+  },
+  "vca": {
+   "answers": 43,
+   "fabricated": 0.0,
+   "no_id": 0.0,
+   "hedged": 0.0,
+   "ids": 43,
+   "fabricated_ids": 0,
+   "examples": []
+  }
+ }
+}

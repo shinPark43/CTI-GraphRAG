@@ -1,0 +1,14 @@
+{
+ "method": "vanilla_rag",
+ "model": "llama3:8b-instruct-fp16",
+ "subset": "dev",
+ "tasks": [
+  "ata",
+  "vca"
+ ],
+ "limit": null,
+ "k": 5,
+ "concurrency": 2,
+ "name": "dev__vanilla_rag__llama3-8b-fp16",
+ "llm_base_url": "http://localhost:11434/v1"
+}

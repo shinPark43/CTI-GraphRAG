@@ -11,7 +11,14 @@ __pycache__/
 data/raw/
 .cache/
 
-# experiment outputs
-runs/
+# experiment outputs: everything except the development-split results the report uses
+runs/*
+!runs/README.md
+!runs/dev__*/
+!runs/*__dev.json
+!runs/gds_analysis.json
+!runs/extraction_audit.json
+!runs/compare_extractors.json
+!runs/ragas__mini20.jsonl
 
 .DS_Store

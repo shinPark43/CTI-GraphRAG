@@ -1,0 +1,37 @@
+{
+ "tiers": {
+  "supported": {
+   "n": 25,
+   "correct": 19,
+   "precision": 0.76,
+   "ci95": [
+    0.566,
+    0.885
+   ]
+  },
+  "context": {
+   "n": 25,
+   "correct": 6,
+   "precision": 0.24,
+   "ci95": [
+    0.115,
+    0.434
+   ]
+  },
+  "conflict": {
+   "n": 25,
+   "correct": 8,
+   "precision": 0.32,
+   "ci95": [
+    0.172,
+    0.516
+   ]
+  }
+ },
+ "edges": {
+  "supported": 2488,
+  "context": 934,
+  "conflict": 90
+ },
+ "overall_precision_weighted": 0.61
+}

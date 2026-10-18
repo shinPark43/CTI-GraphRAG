@@ -1,0 +1,37 @@
+{
+ "model": "llama3:8b-instruct-fp16",
+ "temperature": 0.0,
+ "chunks": 40,
+ "records": 209,
+ "kept": 148,
+ "dropped": {
+  "schema": 0,
+  "unknown_id": 3,
+  "not_verbatim": 58
+ },
+ "drop_rate": 0.292,
+ "latency_s": {
+  "mean": 12.31,
+  "max": 23.76
+ },
+ "reference": {
+  "model": "gpt-5.4-mini-2026-03-17",
+  "kept": 239
+ },
+ "agreement_exact": {
+  "precision_vs_ref": 0.178,
+  "recall_vs_ref": 0.108,
+  "f1": 0.135,
+  "shared": 23,
+  "local": 129,
+  "ref": 212
+ },
+ "agreement_family": {
+  "precision_vs_ref": 0.291,
+  "recall_vs_ref": 0.186,
+  "f1": 0.227,
+  "shared": 37,
+  "local": 127,
+  "ref": 199
+ }
+}

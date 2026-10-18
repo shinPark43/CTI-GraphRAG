@@ -184,3 +184,18 @@ Re-running two dev questions live gives the identical answer text with citations
 Latency (recorded run, Llama-3-8B fp16 on the local Ollama): ATA 4.0 s mean (1 LLM call),
 VCA 15.1 s mean (5 rotation calls, max 17.4 s); the LLM is > 99% of the time. Live: retrieval
 ≈ 5 ms, citations ≈ 7 ms (0.6 s once, to load the confidence signals).
+
+## Identifier hallucination
+
+`scripts/hallucination_check.py` → `runs/hallucination__dev.json`. IDs are extracted as the official
+scorer does and checked against the snapshot. No LLM calls.
+
+| Method | Fabricated ID (answers) | No ID | Hedged (> 1 ID) |
+| --- | --- | --- | --- |
+| Closed-book | 10% (7 of 79 IDs; ATA 23%, e.g. the nonexistent T1193.001 three times) | 7% | 11% |
+| Vanilla RAG | 0% | 0% | 23% (VCA 28%) |
+| SGS | 0% | 0% | 0% |
+| SGS, Neo4j backend | 0% | 0% | 0% |
+
+Retrieval removes fabricated IDs but not hedging; SGS removes both by construction (the model
+picks one of five listed snapshot IDs under a constrained-decoding enum).

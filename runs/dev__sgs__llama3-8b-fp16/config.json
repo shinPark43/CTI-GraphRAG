@@ -1,0 +1,14 @@
+{
+ "method": "sgs",
+ "model": "llama3:8b-instruct-fp16",
+ "subset": "dev",
+ "tasks": [
+  "ata",
+  "vca"
+ ],
+ "limit": null,
+ "k": 5,
+ "concurrency": 2,
+ "name": "dev__sgs__llama3-8b-fp16",
+ "llm_base_url": "http://localhost:11434/v1"
+}
