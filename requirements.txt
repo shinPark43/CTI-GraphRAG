@@ -9,8 +9,12 @@ aiohttp==3.14.5
     #   langchain-community
 aiosignal==1.4.0
     # via aiohttp
+altair==6.3.0
+    # via streamlit
 annotated-doc==0.0.5
-    # via typer
+    # via
+    #   fastapi
+    #   typer
 annotated-types==0.8.0
     # via pydantic
 anyio==4.15.1
@@ -19,10 +23,15 @@ anyio==4.15.1
     #   httpx2
     #   langsmith
     #   openai
+    #   starlette
+    #   streamlit
 appdirs==1.4.4
     # via ragas
 attrs==26.1.0
-    # via aiohttp
+    # via
+    #   aiohttp
+    #   jsonschema
+    #   referencing
 certifi==2026.7.22
     # via
     #   httpcore
@@ -35,6 +44,8 @@ click==8.5.0
     # via
     #   huggingface-hub
     #   instructor
+    #   streamlit
+    #   uvicorn
 colorama==0.4.6 ; sys_platform == 'win32'
     # via
     #   tqdm
@@ -55,6 +66,8 @@ distro==1.9.0
     #   openai
 docstring-parser==0.18.0
     # via instructor
+fastapi==0.146.0
+    # via ctiattr
 filelock==4.2.1
     # via
     #   datasets
@@ -73,6 +86,7 @@ h11==0.16.0
     # via
     #   httpcore
     #   httpcore2
+    #   uvicorn
 hf-xet==1.7.0 ; platform_machine == 'AMD64' or platform_machine == 'ARM64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
     # via huggingface-hub
 httpcore==1.0.9
@@ -104,8 +118,13 @@ idna==3.20
     #   yarl
 instructor==1.17.0
     # via ragas
+itsdangerous==2.2.0
+    # via streamlit
 jinja2==3.1.6
-    # via instructor
+    # via
+    #   altair
+    #   instructor
+    #   pydeck
 jiter==0.14.0
     # via
     #   instructor
@@ -114,6 +133,10 @@ jsonpatch==1.35
     # via langchain-core
 jsonpointer==3.2.1
     # via jsonpatch
+jsonschema==4.26.0
+    # via altair
+jsonschema-specifications==2025.9.1
+    # via jsonschema
 langchain==1.4.6
     # via
     #   langchain-community
@@ -168,6 +191,8 @@ multiprocess==0.70.19
     # via datasets
 mypy-extensions==1.1.0
     # via typing-inspect
+narwhals==2.27.1
+    # via altair
 neo4j==6.4.1
     # via ctiattr
 nest-asyncio==1.6.0
@@ -183,9 +208,11 @@ numpy==2.4.6 ; python_full_version < '3.12'
     #   gensim
     #   langchain-community
     #   pandas
+    #   pydeck
     #   ragas
     #   scikit-network
     #   scipy
+    #   streamlit
 numpy==2.5.4 ; python_full_version >= '3.12'
     # via
     #   ctiattr
@@ -193,15 +220,19 @@ numpy==2.5.4 ; python_full_version >= '3.12'
     #   gensim
     #   langchain-community
     #   pandas
+    #   pydeck
     #   ragas
     #   scikit-network
     #   scipy
+    #   streamlit
 openai==3.3.0
     # via
     #   ctiattr
     #   instructor
     #   langchain-openai
     #   ragas
+opentelemetry-api==1.45.1
+    # via fastapi
 orjson==3.13.0
     # via
     #   langgraph-sdk
@@ -210,24 +241,36 @@ ormsgpack==1.13.0
     # via langgraph-checkpoint
 packaging==26.3
     # via
+    #   altair
     #   datasets
     #   huggingface-hub
     #   langchain-core
     #   langsmith
     #   marshmallow
+    #   streamlit
 pandas==3.0.6
-    # via datasets
-pillow==13.0.0
-    # via ragas
+    # via
+    #   ctiattr
+    #   datasets
+    #   streamlit
+pillow==12.3.0
+    # via
+    #   ragas
+    #   streamlit
 propcache==0.5.4
     # via
     #   aiohttp
     #   yarl
+protobuf==7.36.2
+    # via streamlit
 pyarrow==26.0.0
-    # via datasets
+    # via
+    #   datasets
+    #   streamlit
 pydantic==2.14.1
     # via
     #   ctiattr
+    #   fastapi
     #   instructor
     #   langchain
     #   langchain-core
@@ -242,6 +285,8 @@ pydantic-core==2.50.1
     #   pydantic
 pydantic-settings==2.16.0
     # via langchain-community
+pydeck==0.9.3
+    # via streamlit
 pygments==2.21.0
     # via rich
 python-dateutil==2.9.0.post0
@@ -250,6 +295,8 @@ python-dotenv==1.2.4
     # via
     #   ctiattr
     #   pydantic-settings
+python-multipart==0.0.32
+    # via streamlit
 pytz==2026.5
     # via neo4j
 pyyaml==6.0.3
@@ -260,6 +307,10 @@ pyyaml==6.0.3
     #   langchain-core
 ragas==0.4.3
     # via ctiattr
+referencing==0.37.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 regex==2026.9.29
     # via
     #   instructor
@@ -270,6 +321,7 @@ requests==2.34.2
     #   langchain-community
     #   langsmith
     #   requests-toolbelt
+    #   streamlit
     #   tiktoken
 requests-toolbelt==1.0.0
     # via langsmith
@@ -278,6 +330,10 @@ rich==14.3.4
     #   instructor
     #   ragas
     #   typer
+rpds-py==2026.9.1
+    # via
+    #   jsonschema
+    #   referencing
 scikit-network==0.33.5
     # via ragas
 scipy==1.17.1 ; python_full_version < '3.12'
@@ -302,6 +358,12 @@ sniffio==1.3.1
     #   openai
 sqlalchemy==2.1.5
     # via langchain-community
+starlette==1.9.0
+    # via
+    #   fastapi
+    #   streamlit
+streamlit==1.66.0
+    # via ctiattr
 tenacity==9.2.1
     # via
     #   instructor
@@ -328,23 +390,30 @@ typing-extensions==4.16.0
     # via
     #   aiohttp
     #   aiosignal
+    #   altair
     #   anyio
+    #   fastapi
     #   httpx2
     #   huggingface-hub
     #   langchain-core
     #   langchain-protocol
     #   langsmith
     #   openai
+    #   opentelemetry-api
     #   pydantic
     #   pydantic-core
     #   pydantic-settings
+    #   referencing
     #   sqlalchemy
+    #   starlette
+    #   streamlit
     #   typing-inspect
     #   typing-inspection
 typing-inspect==0.9.0
     # via dataclasses-json
 typing-inspection==0.4.4
     # via
+    #   fastapi
     #   pydantic
     #   pydantic-settings
 tzdata==2026.5 ; sys_platform == 'emscripten' or sys_platform == 'win32'
@@ -357,10 +426,17 @@ uuid-utils==0.17.1
     # via
     #   langchain-core
     #   langsmith
+uvicorn==0.54.0
+    # via
+    #   ctiattr
+    #   streamlit
+watchdog==6.0.0 ; sys_platform != 'darwin'
+    # via streamlit
 websockets==16.1.1
     # via
     #   langgraph-sdk
     #   langsmith
+    #   streamlit
 wrapt==2.5.1
     # via smart-open
 xxhash==4.0.1

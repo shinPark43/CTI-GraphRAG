@@ -182,8 +182,9 @@ class AttributionRequest(BaseModel):
 
 
 class AttributionResponse(BaseModel):
-    answer_id: str = Field(..., pattern=ID_PATTERN, description="Exactly one identifier")
-    answer_title: str
+    answer_id: str | None = Field(..., pattern=ID_PATTERN,
+                                  description="Exactly one identifier (None if a baseline named none)")
+    answer_title: str = ""
     explanation: str = Field("", description="Contains no identifier other than answer_id")
     candidates: list[Candidate] = Field(default_factory=list)
     votes: list[str] = Field(default_factory=list, description="VCA: the pick of each of the 5 rotations")

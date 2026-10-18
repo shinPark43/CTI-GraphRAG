@@ -11,7 +11,7 @@ techniques (task ATA) and CWE weaknesses (task VCA). The design document is
 | Component | Version used | Notes |
 | --- | --- | --- |
 | Python | 3.13 | `requires-python >= 3.11`; gensim has no 3.14 wheels yet |
-| Packages | `requirements.txt` (pinned, 374 lines), `requirements-dev.txt` (pytest) | exported from `uv.lock`; or use `uv sync` |
+| Packages | `requirements.txt` (pinned, 450 lines), `requirements-dev.txt` (pytest) | exported from `uv.lock`; or use `uv sync` |
 | Ollama | 0.35.0 | serves the answering model on `http://localhost:11434/v1` |
 | Answering model | `llama3:8b-instruct-fp16` | Llama-3-8B-Instruct, F16, 8.0B parameters, 8,192-token context, ~16 GB; temperature 0 |
 | Neo4j | 5.26 Community (Docker) | heap 2 GB |
@@ -69,6 +69,21 @@ uv run python scripts/cite_predictions.py dev__sgs__llama3-8b-fp16   # graph cit
 Runs are resumable and write `runs/<name>/` (predictions with full traces, scores).
 The 306-question test split is reserved for the final evaluation.
 
+## Chatbot and API
+
+```bash
+uv run streamlit run app/streamlit_app.py          # chatbot on http://localhost:8501
+uv run uvicorn ctiattr.api:app --port 8000          # REST: POST /attribute, GET /graph/{id}, POST /verify, GET /examples
+```
+
+Paste a threat-report passage (or pick a dev-split example) and choose SGS, vanilla RAG or
+closed-book. An SGS answer shows the chosen ATT&CK technique or CWE, the explanation, timings,
+and five tabs: the **citations** (each graph path with its evidence, provenance and confidence,
+the Cypher that returns it, and a button that checks it against the live graph), the cited
+**subgraph**, the five **candidates** with their evidence cards and votes, **graph analytics**
+for the answer node (PageRank and its percentile, Louvain community and its leading members),
+and the **LLM calls**. Example questions come from the development split only.
+
 ## Repository checkpoint
 
 | Component | Where |
@@ -83,12 +98,11 @@ The 306-question test split is reserved for the final evaluation.
 | Graph Data Science: projection, PageRank, Louvain, WCC, betweenness, paths | `gds.cypher`, `src/ctiattr/gds.py`, `scripts/gds_analysis.py` |
 | Attribution engine (SGS) and baselines (CB, VR, DtR) | `src/ctiattr/sgs.py`, `src/ctiattr/baselines.py` |
 | Graph citations (traceable paths behind each answer) | `src/ctiattr/citations.py`, `scripts/cite_predictions.py` |
+| Attribution service, FastAPI app, Streamlit chatbot | `src/ctiattr/service.py`, `src/ctiattr/api.py`, `app/streamlit_app.py` |
 | Pydantic data models and API payloads | `src/ctiattr/schemas.py` |
 | Official CTIConnect scorer (vendored, unmodified) | `src/ctiattr/vendor/cticonnect_metrics.py` |
 | Gold triples (69) and eval queries (20) | `data/gold_triples.json`, `data/eval_queries.json` |
 | Dev/test split by report | `data/splits/split_v1.json` |
 | Triple verification, RAGAS, recall diagnostics | `scripts/verify_triples.py`, `scripts/ragas_eval.py`, `scripts/*_recall.py` |
-| Parser and model tests (52) | `tests/` |
+| Parser and model tests (56) | `tests/` |
 | Development-split results kept for the final report | `results/dev_results.md`, `reports/design_doc_rev81_with_results.md` |
-
-Not built yet: the FastAPI service and Streamlit chatbot specified in Section 8 of the design document.
