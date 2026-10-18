@@ -3,8 +3,11 @@
 CS 6338 Knowledge Engineering term project (Shinhyuk Park). A knowledge graph built
 only from the [CTIConnect](https://github.com/peng-gao-lab/CTIConnect) `corpus_kb`
 snapshot helps Llama-3-8B-Instruct map threat-report passages to MITRE ATT&CK
-techniques (task ATA) and CWE weaknesses (task VCA). The design document is
-`reports/ShinhyukPark_GraphRAG_DesignDoc.pdf`.
+techniques (task ATA) and CWE weaknesses (task VCA).
+
+- **Final report** (IEEE format, 8 pages): [`reports/final/ShinhyukPark_GraphRAG_FinalReport.pdf`](reports/final/ShinhyukPark_GraphRAG_FinalReport.pdf)
+  (LaTeX source alongside; rebuild with `tectonic ShinhyukPark_GraphRAG_FinalReport.tex`)
+- **Design document** (Milestone 2): [`reports/ShinhyukPark_GraphRAG_DesignDoc.pdf`](reports/ShinhyukPark_GraphRAG_DesignDoc.pdf)
 
 ## Requirements
 
@@ -105,6 +108,7 @@ and the **LLM calls**. Example questions come from the development split only.
 | Dev/test split by report | `data/splits/split_v1.json` |
 | Triple verification, RAGAS, recall diagnostics | `scripts/verify_triples.py`, `scripts/ragas_eval.py`, `scripts/*_recall.py` |
 | Parser and model tests (56) | `tests/` |
-| Development-split results kept for the final report | `results/dev_results.md`, `reports/design_doc_rev81_with_results.md` |
+| Final report: LaTeX source, figure and PDF | `reports/final/` |
+| Development-split results behind the final report | `results/dev_results.md`, `reports/design_doc_rev81_with_results.md` |
 | Run outputs behind those results (predictions with full traces, scores, citations, analyses) | `runs/` (see `runs/README.md`) |
 | Identifier hallucination check | `scripts/hallucination_check.py` |
