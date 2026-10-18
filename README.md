@@ -6,25 +6,46 @@ snapshot helps Llama-3-8B-Instruct map threat-report passages to MITRE ATT&CK
 techniques (task ATA) and CWE weaknesses (task VCA). The design document is
 `reports/ShinhyukPark_GraphRAG_DesignDoc.pdf`.
 
+## Requirements
+
+| Component | Version used | Notes |
+| --- | --- | --- |
+| Python | 3.13 | `requires-python >= 3.11`; gensim has no 3.14 wheels yet |
+| Packages | `requirements.txt` (pinned, 374 lines), `requirements-dev.txt` (pytest) | exported from `uv.lock`; or use `uv sync` |
+| Ollama | 0.35.0 | serves the answering model on `http://localhost:11434/v1` |
+| Answering model | `llama3:8b-instruct-fp16` | Llama-3-8B-Instruct, F16, 8.0B parameters, 8,192-token context, ~16 GB; temperature 0 |
+| Neo4j | 5.26 Community (Docker) | heap 2 GB |
+| Neo4j plugins | Graph Data Science 2.13.14, APOC 5.26.32 | installed by `NEO4J_PLUGINS` in `docker-compose.yml`; n10s is not needed (property-graph design, no RDF import) |
+| OpenAI API | `text-embedding-3-large` | all retrieval embeddings (cached in `.cache/` after the first run); `gpt-5.4-mini` only to rebuild the report layer or run RAGAS |
+
 ## Setup
 
-Requires Python 3.13 and [uv](https://docs.astral.sh/uv/), Ollama with
-`llama3:8b-instruct-fp16`, and Docker for Neo4j.
-
 ```bash
-uv sync
-cp .env.example .env        # fill in OPENAI_API_KEY (embeddings) and NEO4J_PASSWORD
+# 1. Python environment (either one)
+uv sync                                            # uv: exact versions from uv.lock
+python3.13 -m venv .venv && . .venv/bin/activate \
+  && pip install -r requirements.txt -r requirements-dev.txt && pip install -e . --no-deps
+
+# 2. Configuration
+cp .env.example .env        # set OPENAI_API_KEY and NEO4J_PASSWORD; LLM_* default to the local Ollama
+
+# 3. Answering model (local)
+ollama pull llama3:8b-instruct-fp16
+
+# 4. Neo4j with GDS and APOC
+docker compose up -d                               # container cti-neo4j, volume cti-neo4j-data
+
+# 5. Data and checks
 uv run python scripts/fetch_cticonnect.py          # pinned CTIConnect data, checksums verified
 uv run python scripts/build_benchmark_files.py     # dev/test split, eval_queries.json, gold_triples.json
 uv run pytest -q
 ```
 
+With pip instead of uv, drop the `uv run` prefix from the commands below.
+
 ## Build the graph
 
 ```bash
-docker run -d --name cti-neo4j -p 127.0.0.1:7474:7474 -p 127.0.0.1:7687:7687 \
-    -e NEO4J_AUTH=neo4j/<password> -e NEO4J_PLUGINS='["graph-data-science","apoc"]' \
-    -v cti-neo4j-data:/data neo4j:5.26                # plugins: GDS 2.13, APOC 5.26
 uv run python scripts/build_report_layer.py --model gpt-5.4-mini-2026-03-17   # optional: data/derived is committed
 uv run python scripts/compare_extractors.py --chunks 40  # same schema-constrained extractor on local Llama-3 vs the committed layer
 uv run python scripts/load_graph.py --wipe          # applies schema.cypher, loads nodes, edges, vectors
@@ -52,6 +73,7 @@ The 306-question test split is reserved for the final evaluation.
 
 | Component | Where |
 | --- | --- |
+| Environment: pinned packages, Neo4j + GDS/APOC, config template | `requirements.txt`, `requirements-dev.txt` (`uv export --no-hashes`), `docker-compose.yml`, `.env.example` |
 | Graph schema: constraints, lookup and vector indexes | `schema.cypher` |
 | Neo4j loader and Cypher candidate bridges | `scripts/load_graph.py`, `src/ctiattr/graph_db.py` |
 | Snapshot-derived rules R1–R6 and candidate generators | `src/ctiattr/snapshot.py`, `src/ctiattr/candidates.py` |

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Initialize Neo4j from schema.cypher and load the snapshot graph + report layer.
 
-Neo4j 5 runs locally in Docker (credentials in .env):
+Neo4j 5 runs locally in Docker with the GDS and APOC plugins (docker-compose.yml;
+credentials in .env):
 
-    docker run -d --name cti-neo4j -p 127.0.0.1:7474:7474 -p 127.0.0.1:7687:7687 \\
-        -e NEO4J_AUTH=neo4j/<password> -e NEO4J_PLUGINS='["graph-data-science","apoc"]' \\
-        -v cti-neo4j-data:/data neo4j:5.26
+    docker compose up -d
     uv run python scripts/load_graph.py --wipe
     uv run python scripts/load_graph.py --annotate-only   # after relabelling the extraction audit
 
