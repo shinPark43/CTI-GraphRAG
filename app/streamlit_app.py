@@ -176,9 +176,11 @@ def render(msg: dict, idx: int) -> None:
             st.info("No citation paths.")
     with tabs[2]:
         votes = pd.Series(resp["votes"]).value_counts().to_dict() if resp["votes"] else {}
-        st.dataframe(pd.DataFrame([{"rank": c["rank"], "id": c["id"], "votes": votes.get(c["id"], ""),
-                                    "evidence card": c["card"]} for c in resp["candidates"]]),
-                     hide_index=True, width="stretch")
+        rows = [{"rank": c["rank"], "id": c["id"], "evidence card": c["card"]} for c in resp["candidates"]]
+        if votes:  # VCA: how many of the five rotations picked each candidate
+            for r in rows:
+                r["votes"] = int(votes.get(r["id"], 0))
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
     with tabs[3]:
         g = svc.graph_context(resp["answer_id"]) if resp["answer_id"] else None
         if g is None:
