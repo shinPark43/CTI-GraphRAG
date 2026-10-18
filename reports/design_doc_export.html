@@ -12,10 +12,10 @@
 <table><thead><tr><th>ID</th><th>Requirement</th><th>Target</th></tr></thead><tbody><tr><td>NFR1</td><td>Local inference</td><td>Llama-3-8B-Instruct fp16 in Ollama on a MacBook; no report text sent to a hosted LLM</td></tr><tr><td>NFR2</td><td>Latency per question</td><td>under 10 s for one-call methods; under 30 s with VCA&#39;s five rotation calls</td></tr><tr><td>NFR3</td><td>Reproducibility</td><td>temperature 0, pinned dataset commit, model digest recorded per run</td></tr><tr><td>NFR4</td><td>Cost and integrity</td><td>embeddings cached on disk (one-time KB embedding about $0.09); test split never used during development</td></tr></tbody></table>
 <h2 id="2-end-to-end-system-architecture">2. End-to-End System Architecture</h2>
 <p>The system has an offline build stage that turns official records into a validated Neo4j graph, and a per-question stage in which the graph produces candidates and the small LLM only chooses among them.</p>
-<figure data-embed="node/c46c8bdd-37f3"><figcaption>system architecture · build time and query time</figcaption></figure>
-<p>Every ID the system can answer was written by the loader from an official record; the LLM&#39;s output is restricted to IDs the graph handed it.</p>
 <h3 id="data-flow">Data flow</h3>
 <table><thead><tr><th>From → To</th><th>Input → output</th><th>Protocol</th></tr></thead><tbody><tr><td>Snapshot → loader, extractor</td><td><code>corpus_kb</code> JSONL and report summaries → validated nodes, edges and report layer</td><td>file read with sha256 check; OpenAI chat API in JSON mode for extraction</td></tr><tr><td>Loader, embedders → Neo4j</td><td>records, rule results, text and graph vectors → graph with constraints and vector indexes</td><td>Bolt (neo4j driver), batched <code>UNWIND</code> writes</td></tr><tr><td>Chatbot → FastAPI</td><td>passage, taxonomy, optional question → <code>AttributionRequest</code></td><td>HTTP POST <code>/attribute</code></td></tr><tr><td>Retrieve, expand ↔ Neo4j</td><td>question and passage vectors → top-5 candidates with evidence cards (R4–R6)</td><td>Cypher: vector similarity, one-hop aggregation</td></tr><tr><td>Select → Ollama</td><td>5 cards → one ID (VCA: majority over 5 rotations)</td><td>OpenAI-compatible chat API, JSON-schema enum, temperature 0</td></tr><tr><td>Answer → chatbot, runner → scorer</td><td>chosen ID, path, calls → <code>AttributionResponse</code>; P / R / F1</td><td>HTTP response; <code>predictions.jsonl</code>; CTIConnect <code>metrics.py</code></td></tr></tbody></table>
+<figure data-embed="node/c46c8bdd-37f3"><figcaption>system architecture · build time and query time</figcaption></figure>
+<p>Every ID the system can answer was written by the loader from an official record; the LLM&#39;s output is restricted to IDs the graph handed it.</p>
 <h2 id="3-knowledge-graph-schema-construction">3. Knowledge-Graph Schema &amp; Construction</h2>
 <p>The graph is built only from CTIConnect&#39;s <code>corpus_kb</code> snapshot (commit 554797d) and its 321 report summaries. Structure the snapshot already records (ATT&amp;CK hierarchy and tactics, CAPEC links to CWE and ATT&amp;CK, CVE weakness labels) is parsed deterministically with no LLM, and its edge counts match CTIFoundry&#39;s for the same snapshot. Outside data (ATT&amp;CK STIX, CWE XML, NVD) and the benchmark&#39;s <code>construction/</code> files, which generated the questions and their answers, are excluded so results stay comparable with the paper; as a consequence the graph has no CWE parent–child hierarchy.</p>
 <h3 id="node-types">Node types</h3>
@@ -27,7 +27,7 @@
 <p>Prose is the only input that needs an LLM. The report summaries become labelled examples of report wording for each technique, following CTIFoundry&#39;s build phase (Steps 0 and 2; its entity-mention and resolution steps serve multi-document synthesis, which is out of scope).</p>
 <ul><li><p><strong>Chunking</strong>: clause-bounded chunks of 200–900 characters, split after <code>.</code>, <code>!</code>, <code>?</code> or <code>;</code>, with no overlap. Each chunk keeps exact character offsets into its report, re-verified on load (650 chunks).</p></li><li><p><strong>Prompt</strong>: CTIFoundry&#39;s TTP-grounding prompt (App. G.3) verbatim, with the tactic list filled from the snapshot. It carries seven few-shot mappings from outcome phrases to techniques (&quot;encrypts files&quot; → T1486) and rules that exclude defenses, generic outcomes and bare tool names. Model gpt-5.4-mini-2026-03-17 in JSON mode; output <code>{&quot;ttps&quot;: [{&quot;behavior&quot;, &quot;technique_id&quot;, &quot;technique_name&quot;}]}</code>.</p></li><li><p><strong>Error handling</strong>: an unparseable response yields no records for its chunk. A record is kept only if its ID exists in the snapshot and its behavior phrase occurs verbatim in its chunk; 3,512 of 3,741 extracted records pass.</p></li><li><p><strong>Confidence</strong>: the prompt tells the model to omit behaviors it is unsure of, and both checks are hard gates. A graded score, the cosine between a behavior and its technique&#39;s text with a threshold set on the 69 gold triples, is the planned extension.</p></li><li><p><strong>Question side</strong>: the quoted passage and any CVE, CWE or ATT&amp;CK IDs are taken from each question by regex, never by the LLM.</p></li></ul>
 <h3 id="entity-resolution-names-to-ids">Entity resolution: names to IDs</h3>
-<p>Small models recall titles more reliably than numbers. In the preliminary run, Llama-3-8B paired &quot;Exploit Public-Facing Application&quot; with T1059.001 (it is T1190). So a generated ID is never trusted on its own:</p>
+<p>Small models recall titles more reliably than numbers, so a generated ID is never trusted on its own:</p>
 <ol><li><p><strong>Exact match</strong>: the ID exists in the graph and its title matches the generated name after normalization.</p></li><li><p><strong>Title lookup</strong>: normalized title equality within the target taxonomy.</p></li><li><p><strong>Retired IDs</strong>: follow <code>REPLACED_BY</code> to the current sub-technique.</p></li><li><p><strong>Embedding fallback</strong>: nearest title by cosine similarity, accepted only above a threshold τ tuned on the dev split (initial τ = 0.80); below τ the answer is marked unresolved.</p></li></ol>
 <h2 id="4-graph-storage-enhancement-reasoning">4. Graph Storage, Enhancement &amp; Reasoning</h2>
 <p>The graph lives in Neo4j 5, which holds the typed nodes and edges and vector indexes over every text the engine searches. The reasoning layer adds three bridges from report wording to taxonomy entries (CAPEC patterns, CVE examples and report-layer behaviors) and derives domain, retired status and tactics as attributes. It never filters candidates by those attributes, because a filter would assume what the answers look like.</p>
@@ -79,7 +79,7 @@ RETURN w.id AS cwe, sum(2 * score - 1) AS bridge_score ORDER BY bridge_score DES
 <p><strong>Leakage guard.</strong> Report-behavior edges from the question&#39;s own report are removed before propagation; during evaluation the vectors are recomputed per held-out report, while the deployed chatbot uses the full graph. node2vec is trained on the <code>corpus_kb</code> edges only, without report behaviors.</p>
 <p><strong>Use in the methods.</strong> A graph-embedding ranking scores targets for the question and for the passage, fused by RRF like the other rankings. It enters two evaluation rows (Section 7): GE-RAG, vanilla RAG&#39;s prompt over the GE top 5, and SGS + GE, the GE ranking added to SGS&#39;s fusion.</p>
 <table><thead><tr><th>Parameter</th><th>Values searched</th><th>Selection</th></tr></thead><tbody><tr><td>A: edge set</td><td>taxonomy, links, kb (taxonomy + links), report, kb + report</td><td>dev recall@5, one setting shared by ATA and VCA</td></tr><tr><td>A: mixing α, hops K</td><td>α ∈ {0.2, 0.4, 0.6}, K ∈ {1, 2}</td><td>dev recall@5</td></tr><tr><td>B: walks</td><td>10 walks per node, length 40, p = 1, q ∈ {0.5, 1, 2}</td><td>dev recall@5</td></tr><tr><td>B: skip-gram</td><td>128 dimensions, window 5, 5 negative samples, 1 epoch (gensim 4.4)</td><td>fixed</td></tr><tr><td>B: weight λ</td><td>{0.1, 0.25, 0.5, 1.0}</td><td>dev recall@5</td></tr></tbody></table>
-<p><strong>Indexing.</strong> Propagated vectors (3,072-d) for techniques and CWEs and node2vec vectors (128-d) are stored as node properties with their own Neo4j vector indexes (<code>technique_prop_emb</code>, <code>cwe_prop_emb</code>, <code>node2vec_emb</code>), planned additions to <code>schema.cypher</code> beside its five text indexes. Code: <code>src/ctiattr/graph_embed.py</code>; search grid: <code>scripts/graph_embed_recall.py</code>.</p>
+<p><strong>Indexing.</strong> Propagated vectors (3,072-d) for techniques and CWEs and node2vec vectors (128-d) are stored as node properties with their own Neo4j vector indexes (<code>technique_prop_emb</code>, <code>cwe_prop_emb</code>, <code>node2vec_emb</code>), planned additions to <code>schema.cypher</code> beside its five text indexes. Report text is indexed at the behavior level: each ReportBehavior is a verbatim span of its ReportChunk, and the behavior index serves as the chunk index because one 900-character chunk mixes several behaviors. Code: <code>src/ctiattr/graph_embed.py</code>; search grid: <code>scripts/graph_embed_recall.py</code>.</p>
 <h3 id="hyperparameters">Hyperparameters</h3>
 <p>Fixed: text-embedding-3-large (3,072 dimensions, L2-normalized, as in CTIConnect) and the standard RRF constant 60. Set on the dev split: 10 / 20 / 30 neighbours for the CAPEC, CVE and report bridges, and 5 candidates shown to the model, since 10 lowered selection accuracy in pilot runs even when the gold was listed.</p>
 <h2 id="6-attribution-qa-engine-prompt-templates">6. Attribution QA Engine &amp; Prompt Templates</h2>
@@ -101,27 +101,77 @@ Candidates:
 
 Choose the ONE candidate that best describes the behavior in the passage. Judge by
 what each candidate means, not by shared words. Return JSON with its id.</code></pre>
+<p><strong>Answer generator prompt (exact).</strong> After the choice, a second call writes the answer the chatbot shows and RAGAS scores. Any other ATT&amp;CK, CWE or CAPEC identifier in its output is replaced by that entry&#39;s title, so official F1 is unchanged.</p>
+<pre><code class="language-text">The passage below was attributed to {id} — {title}.
+Evidence: {card}
+Passage: &quot;{passage}&quot;
+Answer the user&#39;s question in 3-5 sentences: {question}
+Mention no other ATT&amp;CK, CWE or CAPEC identifier.</code></pre>
 <p><strong>Alternatives considered.</strong> Ten candidates instead of five lowered selection accuracy even when the gold was listed. A pairwise tournament needed up to 8 calls with no gain over one listwise call, and a rotation vote for ATA gained nothing once report examples were on the cards. Tactic-first narrowing is covered under R3, and an output fact-checker is unnecessary because the enum restriction and the final check already block invented IDs.</p>
 <h2 id="7-evaluation-pipeline-benchmark-protocol">7. Evaluation Pipeline &amp; Benchmark Protocol</h2>
 <p>All methods are scored with CTIConnect&#39;s official identifier F1 on its 379 attribution questions (ATA 160, VCA 219), with the same model, embedder and data, so differences come from the method alone. Configurations are chosen on the 73-question dev split; the 306-question test split stays untouched until the final evaluation, where each method runs on it once.</p>
 <h3 id="data-and-splits">Data and splits</h3>
-<ul><li><p><strong>Questions</strong>: CTIConnect <code>data/entity_attribution</code>, pinned to commit 554797d. Every question has exactly one gold ID.</p></li><li><p><strong>Split by report</strong>: questions are split by source report (seed 13), so no report&#39;s passages appear on both sides: dev 73 questions from 29 reports (30 ATA, 43 VCA), test 306.</p></li><li><p><strong>Quick-look set</strong> (<code>eval_queries.json</code>): 20 dev questions (10 ATA, 10 VCA), for fast checks and the human evaluation.</p></li><li><p><strong>Known ceiling</strong>: two pairs of ATA questions are word-for-word identical but have different gold IDs (e.g. ata-106 T1105, ata-107 T1059), so maximum ATA F1 is 0.988.</p></li></ul>
+<ul><li><p><strong>Questions</strong>: CTIConnect <code>data/entity_attribution</code>, pinned to commit 554797d. Every question has exactly one gold ID.</p></li><li><p><strong>Split by report</strong>: questions are split by source report (seed 13), so no report&#39;s passages appear on both sides: dev 73 questions from 29 reports (30 ATA, 43 VCA), test 306.</p></li><li><p><strong>Quick-look set</strong> (<code>eval_queries.json</code>): 20 dev questions (10 ATA, 10 VCA), for fast checks and the human evaluation. They are single-hop (passage → one ID) by design, under the approved scope change (Section 1).</p></li><li><p><strong>Known ceiling</strong>: two pairs of ATA questions are word-for-word identical but have different gold IDs (e.g. ata-106 T1105, ata-107 T1059), so maximum ATA F1 is 0.988.</p></li></ul>
 <h3 id="automated-metrics">Automated metrics</h3>
-<table><thead><tr><th>Metric</th><th>What it measures</th><th>Implementation</th></tr></thead><tbody><tr><td>Identifier P / R / F1, exact match</td><td>the benchmark score</td><td>CTIConnect <code>evaluation/metrics.py</code>, vendored unmodified; its 21 tests pass</td></tr><tr><td>Candidate recall@k (k = 1, 5, 10, 20, 50)</td><td>whether the gold ID reaches the model</td><td><code>scripts/retrieval_recall.py</code></td></tr><tr><td>IDs per answer</td><td>over-prediction, which the scorer penalizes</td><td>run summary</td></tr><tr><td>Triple P / R / F1</td><td><code>DESCRIBES_*</code> triples vs 69 gold triples</td><td><code>scripts/verify_triples.py</code> (Section 4)</td></tr><tr><td>RAGAS faithfulness, answer relevancy, context recall</td><td>whether the explanation is supported by the retrieved KB entries</td><td>RAGAS 0.4 on the 20 eval queries; contexts = what the model was shown, reference = CTIConnect&#39;s reference answer</td></tr><tr><td>Latency, tokens</td><td>cost per question</td><td>logged per call</td></tr></tbody></table>
+<table><thead><tr><th>Metric</th><th>What it measures</th><th>Implementation</th></tr></thead><tbody><tr><td>Identifier P / R / F1, exact match, IDs per answer</td><td>the benchmark score and over-prediction</td><td>CTIConnect <code>evaluation/metrics.py</code>, vendored unmodified; its 21 tests pass</td></tr><tr><td>Candidate recall@k (k = 1, 5, 10, 20, 50)</td><td>whether the gold ID reaches the model</td><td><code>scripts/retrieval_recall.py</code></td></tr><tr><td>Triple P / R / F1</td><td><code>DESCRIBES_*</code> triples vs 69 gold triples</td><td><code>scripts/verify_triples.py</code> (Section 4)</td></tr><tr><td>RAGAS faithfulness, answer relevancy, context recall</td><td>whether the answer is supported by the KB entries shown</td><td>RAGAS 0.4 on the 20 eval queries (configuration below)</td></tr></tbody></table>
 <p>Scoring rule: a failed call is scored as an empty answer (F1 = 0), never dropped. CTIConnect&#39;s own aggregator drops missing predictions, which would inflate scores.</p>
 <h3 id="models-and-comparison">Models and comparison</h3>
 <ul><li><p><strong>Answering model</strong>: Llama-3-8B-Instruct only, the smallest model in CTIConnect&#39;s Table III, served by Ollama at full precision (fp16), temperature 0. Restricting the study to one model keeps every comparison on the same footing within the project&#39;s time.</p></li><li><p><strong>Compared methods</strong>: CB and VR (CTIConnect&#39;s baselines), SGS (Section 6), and the two graph-embedding rows of Section 5: GE-RAG and SGS + GE. Each pair differs in one component, so the comparison isolates it.</p></li><li><p><strong>DtR as a reference row only.</strong> The paper describes DtR as decompose → canonicalize → retrieve, but the released code has no canonicalization step and the paper publishes no prompts, so its 0.28 / 0.40 cannot be reproduced.</p></li><li><p><strong>Reported per method</strong>: identifier P / R / F1 and exact match per task and overall, candidate recall@k, IDs per answer, triple P / R / F1, RAGAS means on the 20 eval queries and the human ratings below.</p></li><li><p><strong>Significance</strong>: paired bootstrap 95% confidence intervals (10,000 resamples) on F1 and McNemar&#39;s exact test on exact match, for SGS vs VR and for each graph-embedding row vs the method it extends.</p></li></ul>
 <h3 id="ragas-configuration">RAGAS configuration</h3>
-<p>SGS answers carry a 3–5 sentence explanation whose other identifiers are replaced by titles, so official F1 is unchanged. Setup: <code>scripts/ragas_eval.py</code>, RAGAS 0.4.3 collections metrics, judge gpt-5.4-mini-2026-03-17, embeddings text-embedding-3-large. Contexts are exactly what each method showed the model (SGS: the 5 evidence cards; VR: the 5 KB records at 600 characters). References are CTIConnect&#39;s reference answers, which also cover the questions&#39; extra asks (likelihood of exploit, affected platforms, consequences). Judge cost: 120 calls and $0.09 for the answer-relevancy pass.</p>
+<p>Setup: <code>scripts/ragas_eval.py</code>, RAGAS 0.4.3 collections metrics, judge gpt-5.4-mini-2026-03-17, embeddings text-embedding-3-large. Contexts are exactly what each method showed the model (SGS: the 5 evidence cards; VR: the 5 KB records at 600 characters). References are CTIConnect&#39;s reference answers, which also cover the questions&#39; extra asks (likelihood of exploit, affected platforms, consequences).</p>
 <h3 id="human-evaluation-protocol">Human evaluation protocol</h3>
 <p>The author scores each system&#39;s answer on the 20 eval queries on a 1–5 scale, with answers shuffled and system labels hidden:</p>
 <table><thead><tr><th>Score</th><th>Factuality</th><th>Completeness</th><th>Coherence</th></tr></thead><tbody><tr><td>5</td><td>ID and every claim match the KB entry and the passage</td><td>names the ID, explains the mapping, answers every sub-question</td><td>reasoning follows from passage to entry with no gaps</td></tr><tr><td>4</td><td>correct ID, one minor inaccuracy</td><td>one sub-question thin</td><td>one small gap</td></tr><tr><td>3</td><td>related ID (parent, child or sibling) or one wrong claim</td><td>one sub-question missing</td><td>understandable but loosely argued</td></tr><tr><td>2</td><td>wrong ID with a plausible argument</td><td>several parts missing</td><td>hard to follow</td></tr><tr><td>1</td><td>wrong ID or invented content</td><td>does not answer</td><td>incoherent</td></tr></tbody></table>
 <p>As an individual project there is one rater; to check consistency, the author re-scores a random 10 answers a week later and reports quadratic-weighted Cohen&#39;s κ between the two passes.</p>
 <h2 id="8-software-interfaces-data-models">8. Software Interfaces &amp; Data Models</h2>
 <p>The engine is a Python package (<code>ctiattr</code>) behind a FastAPI service; a Streamlit chatbot calls it over HTTP, and the evaluation runner calls the same engine in-process so benchmark and chatbot answers come from one code path.</p>
+<h3 id="class-diagram">Class diagram</h3>
+<pre><code class="language-mermaid">classDiagram
+  direction LR
+  class FastAPIApp {
+    +post_attribute(AttributionRequest) AttributionResponse
+    +get_kb(node_id) KBNode
+  }
+  class SGS {
+    +answer(llm, qa, explain)
+    +explain(llm, qa, id, card)
+  }
+  class CandidateGenerator {
+    +ata(question, passage)
+    +vca(question, passage)
+  }
+  class GraphDB {
+    +dense()
+    +capec_bridge()
+    +cve_vote()
+    +report_vote()
+  }
+  class GraphEmbedRetriever {
+    +rank_propagated()
+    +rank_node2vec()
+  }
+  class ChatLLM {
+    +chat_json(prompt, schema)
+  }
+  class AttributionResponse {
+    answer_id
+    explanation
+  }
+  FastAPIApp --&gt; SGS : AttributionRequest
+  SGS --&gt; CandidateGenerator : in-memory backend
+  SGS --&gt; GraphDB : Neo4j backend
+  SGS ..&gt; GraphEmbedRetriever : GE rows
+  SGS --&gt; ChatLLM : select, explain
+  SGS ..&gt; AttributionResponse : returns
+  AttributionResponse *-- Candidate
+  AttributionResponse *-- LLMCall
+  GraphDB --&gt; KBNode
+  GraphDB --&gt; GraphEdge
+  ReportChunk *-- GroundedBehavior
+  GroundedBehavior ..&gt; KBNode : GROUNDS</code></pre>
+<p>The API calls the same <code>SGS</code> engine the evaluation runner uses; candidates come from the in-memory generators or from Cypher on Neo4j, and graph-embedding rankings feed the GE evaluation rows.</p>
 <h3 id="data-models-schemaspy-pydantic-v2">Data models (<code>schemas.py</code>, Pydantic v2)</h3>
-<pre><code class="language-python"># src/ctiattr/schemas.py (excerpt; also the Taxonomy, NodeLabel and Predicate enums, Candidate,
-# GroundedBehavior, GoldTriple and LLMCall)
+<pre><code class="language-python"># src/ctiattr/schemas.py (excerpt; also the enums, Candidate, GroundedBehavior, GoldTriple, LLMCall)
 ID_PATTERN = r&quot;^(T\d{4}(\.\d{3})?|CWE-\d+|CAPEC-\d+|CVE-\d{4}-\d{4,})$&quot;
 
 class KBNode(BaseModel):                      # entity
@@ -129,8 +179,6 @@ class KBNode(BaseModel):                      # entity
     label: NodeLabel                          # AttackTechnique | CWE | CAPEC | CVE
     title: str
     text: str = &quot;&quot;
-    domain: str | None = None                 # rule R1
-    replaced_by: str | None = None            # rule R2
     tactics: list[str] = Field(default_factory=list)
 
 class GraphEdge(BaseModel):                   # relation
@@ -152,24 +200,20 @@ class AttributionRequest(BaseModel):          # query payload
     question: str | None = None
     report_id: str | None = None              # excluded from report-layer examples
     method: str = &quot;sgs&quot;                       # &quot;cb&quot; | &quot;vr&quot; | &quot;sgs&quot;
-    explain: bool = True
 
 class AttributionResponse(BaseModel):
     answer_id: str = Field(..., pattern=ID_PATTERN)   # exactly one identifier
     answer_title: str
     explanation: str = &quot;&quot;                     # no identifier other than answer_id
-    candidates: list[Candidate] = Field(default_factory=list)   # id, rank, evidence card
-    votes: list[str] = Field(default_factory=list)    # VCA: the pick of each rotation
+    candidates: list[Candidate] = Field(default_factory=list)
     calls: list[LLMCall] = Field(default_factory=list)
-    model: str
     latency_ms: float</code></pre>
 <h3 id="api-endpoints-fastapi">API endpoints (FastAPI)</h3>
 <table><thead><tr><th>Method</th><th>Route</th><th>Request → response</th><th>Used by</th></tr></thead><tbody><tr><td>POST</td><td><code>/attribute</code></td><td><code>AttributionRequest</code> → <code>AttributionResponse</code></td><td>chatbot, evaluation runner</td></tr><tr><td>GET</td><td><code>/kb/{node_id}</code></td><td>→ <code>KBNode</code> with parent and children</td><td>chatbot &quot;explain this entry&quot; panel</td></tr><tr><td>GET</td><td><code>/kb/search?q=&amp;taxonomy=&amp;k=</code></td><td>→ <code>list[Candidate]</code></td><td>chatbot search box, retrieval diagnostics</td></tr><tr><td>GET</td><td><code>/health</code></td><td>→ model name, Ollama digest, graph counts</td><td>deployment checks</td></tr></tbody></table>
-<h3 id="frontend">Frontend</h3>
-<p>The Streamlit page takes a pasted passage, shows the chosen ID with its KB definition, the graph path drawn as a small tree (tactic → technique → sub-technique, or passage → CAPEC/CVE → CWE), and an expandable list of the candidates and LLM calls behind the answer.</p>
+<p><strong>Frontend.</strong> The Streamlit page takes a pasted passage, shows the chosen ID with its KB definition, the graph path drawn as a small tree (tactic → technique → sub-technique, or passage → CAPEC/CVE → CWE), and an expandable list of the candidates and LLM calls behind the answer.</p>
 <h2 id="9-risks-references">9. Risks &amp; References</h2>
 <h3 id="risks-and-mitigations">Risks and mitigations</h3>
 <table><thead><tr><th>Risk</th><th>Mitigation</th></tr></thead><tbody><tr><td>Retrieval caps every method: the gold ID must reach the 5 candidates the model sees</td><td>snapshot bridges and graph embeddings fused by RRF (Section 5); recall@k reported beside every F1</td></tr><tr><td>Small samples: on 20 questions one answer moves F1 by 0.05–0.10</td><td>decisions made on the 73-question dev split; final claims only from the 306-question test split, with bootstrap CIs</td></tr><tr><td>Settings and prompts overfit the dev questions</td><td>small search grids reported in full; dev numbers labelled as such; the test split is run once at the end</td></tr><tr><td>Baseline drift from the paper (quantization, decoding defaults)</td><td>fp16 model, CTIConnect prompts verbatim, differences from the paper reported</td></tr></tbody></table>
 <p><strong>Repository checkpoint.</strong> <a href="https://github.com/shinPark43/CTI-GraphRAG">github.com/shinPark43/CTI-GraphRAG</a>: <code>schema.cypher</code> and the Neo4j loader, the extraction prompt and parser tests, <code>data/gold_triples.json</code> (69 triples) and <code>data/eval_queries.json</code> (20 queries); its README lists every component and how to run it.</p>
 <h3 id="references">References</h3>
-<ul><li><p>Boyer, A., Dogdu, E., Choupani, R., Watson, J. S., Sanchez, D., &amp; Ametu, A. (2024). Toward a unified cybersecurity knowledge graph: Leveraging ontologies and open data sources. <em>Recent Advances in Next-Generation Data Science</em>, Springer.</p></li><li><p>Cheng, Y., Liu, Y., Li, C., Song, D., &amp; Gao, P. (2026). CTIConnect: A benchmark for retrieval-augmented LLMs over heterogeneous cyber threat intelligence. <em>KDD &#39;26</em>. <a href="https://arxiv.org/abs/2510.11974">arXiv:2510.11974</a>; <a href="https://github.com/peng-gao-lab/CTIConnect">code and data</a></p></li><li><p>Cheng, Y., Li, C., Cui, Q., Wang, L., Chen, Y., Ding, W., &amp; Gao, P. (2026). CTIFoundry: An agent-native corpus scaffold for cyber threat intelligence. <a href="https://arxiv.org/abs/2608.18613">arXiv:2608.18613</a></p></li><li><p>Cormack, G. V., Clarke, C. L. A., &amp; Büttcher, S. (2009). Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. <em>SIGIR &#39;09</em>.</p></li><li><p>Es, S., James, J., Espinosa-Anke, L., &amp; Schockaert, S. (2024). RAGAS: Automated evaluation of retrieval augmented generation. <em>EACL 2024 (demos)</em>.</p></li><li><p>Lewis, P., et al. (2020). Retrieval-augmented generation for knowledge-intensive NLP tasks. <em>NeurIPS 33</em>.</p></li><li><p>Robertson, S., &amp; Zaragoza, H. (2009). The probabilistic relevance framework: BM25 and beyond. <em>Foundations and Trends in Information Retrieval</em>.</p></li></ul>
+<ul><li><p>Boyer, A., Dogdu, E., Choupani, R., Watson, J. S., Sanchez, D., &amp; Ametu, A. (2024). Toward a unified cybersecurity knowledge graph: Leveraging ontologies and open data sources. <em>Recent Advances in Next-Generation Data Science</em>, Springer.</p></li><li><p>Cheng, Y., Liu, Y., Li, C., Song, D., &amp; Gao, P. (2026). CTIConnect: A benchmark for retrieval-augmented LLMs over heterogeneous cyber threat intelligence. <em>KDD &#39;26</em>. <a href="https://arxiv.org/abs/2510.11974">arXiv:2510.11974</a>; <a href="https://github.com/peng-gao-lab/CTIConnect">code and data</a></p></li><li><p>Cheng, Y., Li, C., Cui, Q., Wang, L., Chen, Y., Ding, W., &amp; Gao, P. (2026). CTIFoundry: An agent-native corpus scaffold for cyber threat intelligence. <a href="https://arxiv.org/abs/2608.18613">arXiv:2608.18613</a></p></li><li><p>Cormack, G. V., Clarke, C. L. A., &amp; Büttcher, S. (2009). Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. <em>SIGIR &#39;09</em>.</p></li><li><p>Es, S., James, J., Espinosa-Anke, L., &amp; Schockaert, S. (2024). RAGAS: Automated evaluation of retrieval augmented generation. <em>EACL 2024 (demos)</em>.</p></li><li><p>Robertson, S., &amp; Zaragoza, H. (2009). The probabilistic relevance framework: BM25 and beyond. <em>Foundations and Trends in Information Retrieval</em>.</p></li></ul>
