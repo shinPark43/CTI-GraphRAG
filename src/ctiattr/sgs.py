@@ -22,7 +22,9 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from collections import Counter, defaultdict
+from functools import cached_property
 from typing import Literal
 
 import numpy as np
@@ -201,13 +203,20 @@ class SGS:
                         system=SYSTEM, max_tokens=300)
         return scrub_ids(call.output.strip(), chosen.upper(), self.title), call
 
-    def answer(self, llm, qa: QA, explain: bool = False) -> tuple[str, dict]:
+    @cached_property
+    def citer(self):
+        from ctiattr.citations import Citer  # loads the report-layer confidence signals on first use
+        return Citer(self)
+
+    def answer(self, llm, qa: QA, explain: bool = False, cite: bool = True) -> tuple[str, dict]:
+        t0 = time.perf_counter()
         if qa.task == "ata":
             ranked, cards = self.ata_candidates(qa)
             rotations = 1
         else:
             ranked, cards = self.vca_candidates(qa)
             rotations = TOP
+        t_retrieval = time.perf_counter() - t0
         picks, calls = [], []
         for k in range(rotations):
             pick, call = self._pick(llm, qa, ranked[k:] + ranked[:k], cards)
@@ -230,4 +239,11 @@ class SGS:
             text += "\n\n" + explanation
             trace["explanation"] = explanation
             calls.append(call.to_dict())
+        t1 = time.perf_counter()
+        if cite:  # graph paths behind the answer: trace only, never in the scored text
+            trace["citations"] = [c.model_dump(exclude_none=True) for c in self.citer.cite(qa, chosen, cards[chosen])]
+        trace["latency_s"] = {"retrieval": round(t_retrieval, 3),
+                              "llm": round(sum(c["latency_s"] for c in calls), 3),
+                              "citations": round(time.perf_counter() - t1, 3),
+                              "total": round(time.perf_counter() - t0, 3)}
         return text, trace

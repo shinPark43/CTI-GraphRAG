@@ -42,6 +42,7 @@ uv run python scripts/verify_triples.py dev__sgs__llama3-8b-fp16 dev__vanilla_ra
 uv run python scripts/ragas_eval.py                 # RAGAS on the 20 eval queries
 uv run python scripts/graph_embed_recall.py         # graph-embedding candidate recall grid (no LLM)
 uv run python scripts/gds_recall.py                 # PageRank / community as retrieval signals (no LLM)
+uv run python scripts/cite_predictions.py dev__sgs__llama3-8b-fp16   # graph citations, checked in Neo4j
 ```
 
 Runs are resumable and write `runs/<name>/` (predictions with full traces, scores).
@@ -59,12 +60,13 @@ The 306-question test split is reserved for the final evaluation.
 | Graph embeddings (propagated text, node2vec) | `src/ctiattr/graph_embed.py` |
 | Graph Data Science: projection, PageRank, Louvain, WCC, betweenness, paths | `gds.cypher`, `src/ctiattr/gds.py`, `scripts/gds_analysis.py` |
 | Attribution engine (SGS) and baselines (CB, VR, DtR) | `src/ctiattr/sgs.py`, `src/ctiattr/baselines.py` |
+| Graph citations (traceable paths behind each answer) | `src/ctiattr/citations.py`, `scripts/cite_predictions.py` |
 | Pydantic data models and API payloads | `src/ctiattr/schemas.py` |
 | Official CTIConnect scorer (vendored, unmodified) | `src/ctiattr/vendor/cticonnect_metrics.py` |
 | Gold triples (69) and eval queries (20) | `data/gold_triples.json`, `data/eval_queries.json` |
 | Dev/test split by report | `data/splits/split_v1.json` |
 | Triple verification, RAGAS, recall diagnostics | `scripts/verify_triples.py`, `scripts/ragas_eval.py`, `scripts/*_recall.py` |
-| Parser and model tests (49) | `tests/` |
+| Parser and model tests (52) | `tests/` |
 | Development-split results kept for the final report | `results/dev_results.md`, `reports/design_doc_rev81_with_results.md` |
 
 Not built yet: the FastAPI service and Streamlit chatbot specified in Section 8 of the design document.

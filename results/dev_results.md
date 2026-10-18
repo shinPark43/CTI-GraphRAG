@@ -162,3 +162,25 @@ llama3:8b-instruct-fp16 on the local Ollama, temperature 0):
 Constrained decoding removes malformed output entirely, but the 8B model paraphrases instead of
 quoting (58 non-verbatim) and agrees with the larger model on few techniques, so the committed layer
 stays the gpt-5.4-mini build; Llama-3-8B stays the answering model.
+
+## Graph citations and latency
+
+`src/ctiattr/citations.py`; `SGS.answer` adds `citations` and a `latency_s` breakdown to the trace
+(never to the scored answer text). Existing runs are cited post hoc, without LLM calls, by
+`scripts/cite_predictions.py <run>`, which also runs every citation's Cypher against Neo4j.
+
+Citation kinds: **report** (ThreatReport → ReportChunk → ReportBehavior → technique, with the
+behavior's character span, tier and GROUNDS confidence; never the question's own report),
+**capec** (CAPEC → technique / CWE, for CAPEC patterns similar to the passage), **cve**
+(CVE → CWE with NVD Primary/Secondary), **taxonomy** (sub-technique and tactic edges). Each records
+whether the model saw it on the candidate card.
+
+Dev SGS run (`runs/dev__sgs__llama3-8b-fp16`, 73 answers): 249 citations (report 79, CAPEC 66,
+CVE 58, taxonomy 46); every answer has at least one evidence path; **249/249 paths verified in
+Neo4j**. Correct and wrong answers carry about the same number of evidence paths (2.71 vs 2.85),
+so path count alone does not signal correctness; the citations make an answer checkable, not right.
+Re-running two dev questions live gives the identical answer text with citations attached.
+
+Latency (recorded run, Llama-3-8B fp16 on the local Ollama): ATA 4.0 s mean (1 LLM call),
+VCA 15.1 s mean (5 rotation calls, max 17.4 s); the LLM is > 99% of the time. Live: retrieval
+≈ 5 ms, citations ≈ 7 ms (0.6 s once, to load the confidence signals).

@@ -148,6 +148,30 @@ class LLMCall(BaseModel):
     latency_s: float
 
 
+class PathStep(BaseModel):
+    """One element of a graph path: a node (label + id) or a relationship type."""
+    label: str | None = None
+    node: str | None = None
+    rel: str | None = None
+
+
+class Citation(BaseModel):
+    """A graph path that supports the answer (ctiattr.citations)."""
+    kind: Literal["report", "capec", "cve", "taxonomy"]
+    path: list[PathStep]
+    cypher: str = Field(..., description="MATCH query returning exactly this path")
+    evidence: str = Field("", description="Behavior phrase, CAPEC name, CVE description or tactic")
+    similarity: float | None = Field(None, description="Cosine of the evidence to the passage")
+    shown_to_model: bool = Field(False, description="The evidence was on the candidate's card")
+    in_report_vote: bool = False
+    source: str
+    method: Literal["asserted", "derived", "segmented", "extracted"]
+    confidence: float | None = None
+    tier: Literal["supported", "context", "conflict"] | None = None
+    weakness_type: Literal["Primary", "Secondary"] | None = None
+    span: list | None = Field(None, description="[report_id, start, end] of the behavior in its report")
+
+
 class AttributionRequest(BaseModel):
     passage: str = Field(..., min_length=10)
     taxonomy: Taxonomy
@@ -164,6 +188,8 @@ class AttributionResponse(BaseModel):
     candidates: list[Candidate] = Field(default_factory=list)
     votes: list[str] = Field(default_factory=list, description="VCA: the pick of each of the 5 rotations")
     calls: list[LLMCall] = Field(default_factory=list)
+    citations: list[Citation] = Field(default_factory=list, description="Graph paths behind answer_id")
+    latency: dict[str, float] = Field(default_factory=dict, description="Seconds: retrieval, llm, citations, total")
     model: str
     latency_ms: float
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
