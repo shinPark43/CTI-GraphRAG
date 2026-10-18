@@ -1,7 +1,7 @@
 """Paths and endpoint settings.
 
 The answering LLM and the embedder are configured separately: the LLM is any
-OpenAI-compatible server (Ollama on the DGX Spark), embeddings always come from
+OpenAI-compatible server (the local Ollama), embeddings always come from
 OpenAI so retrieval matches the CTIConnect paper.
 """
 

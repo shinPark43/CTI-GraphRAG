@@ -4,7 +4,8 @@
 Neo4j 5 runs locally in Docker (credentials in .env):
 
     docker run -d --name cti-neo4j -p 127.0.0.1:7474:7474 -p 127.0.0.1:7687:7687 \\
-        -e NEO4J_AUTH=neo4j/<password> -v cti-neo4j-data:/data neo4j:5.26
+        -e NEO4J_AUTH=neo4j/<password> -e NEO4J_PLUGINS='["graph-data-science","apoc"]' \\
+        -v cti-neo4j-data:/data neo4j:5.26
     uv run python scripts/load_graph.py --wipe
 
 Embeddings come from the on-disk cache (no API calls once the indexes are built).

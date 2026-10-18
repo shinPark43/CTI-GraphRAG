@@ -45,3 +45,52 @@ Shared setting vs text alone: ATA +7/−0 questions, CI [+0.10, +0.40]; VCA +10/
 CI [+0.12, +0.37]. Vs SGS candidates: ATA +5/−0, CI [+0.03, +0.30]; VCA +4/−5.
 
 Stage 2 (Llama runs of GE-RAG and SGS with A's candidates) is deferred to the final report.
+
+## Graph Data Science on the corpus_kb graph
+
+`gds.cypher` via `scripts/gds_analysis.py` → `runs/gds_analysis.json`. Neo4j GDS 2.13.14;
+projection = corpus_kb only (5,803 nodes, 6,764 edges; report layer excluded), all
+algorithms run in under 1 s. No questions used.
+
+- **Degree.** Tactics are hubs (mean 72, max 304: defense-evasion). CVEs have 1–4 edges.
+  891 of 1,342 CWEs (66%) and 131 of 615 CAPECs are isolated: the snapshot carries no CWE
+  hierarchy, so a CWE is connected only if a CVE or CAPEC points at it.
+- **WCC.** 1,116 components; one giant component of 4,451 nodes (1,066 techniques, 344 CWEs,
+  459 CAPECs, 2,565 CVEs). Most other components are singletons.
+- **PageRank** (stored direction, d = 0.85, converged in 4 iterations). CWE leaders follow how
+  often CVEs are labelled with them: CWE-79 (37.7), CWE-89, CWE-74, CWE-200, CWE-787.
+  Technique leaders: T1195, T1027, T1036, T1218. CAPEC nodes have only outgoing edges, so their
+  PageRank is flat; betweenness ranks them instead.
+- **Betweenness.** Bridges between the vulnerability and ATT&CK sides: CWE-20, CWE-79, CWE-200
+  and CAPEC-13, CAPEC-60, CAPEC-76.
+- **Louvain** (single thread for reproducibility): 1,149 communities, modularity 0.864 over 4 levels.
+  The largest group CVEs around one CWE family (XSS 384, input validation 361, SQLi 278,
+  memory reads 231) or techniques around tactics (persistence / priv-esc 327, defense evasion 228).
+  79.4% of techniques sit in a community whose dominant tactic is one of their own.
+- **Bridge coverage.** 260 CWEs have CVEs, 336 have CAPECs, 149 reach a technique through CAPEC;
+  189 techniques have a CAPEC. 7,866 CVE → CWE ← CAPEC → technique paths.
+  Example (Dijkstra, 3 hops): CVE-2020-12790 → CWE-74 → CAPEC-13 → T1562.003.
+
+### GDS outputs as retrieval signals, stage 1 (recall, no LLM)
+
+`scripts/gds_recall.py` → `runs/gds_recall__dev.json`. PR = cos + β·(log PageRank scaled to
+[0, 1] within the target kind); community = cos + γ·(share of the question's 10 nearest KB nodes,
+cosine-weighted, in the candidate's Louvain community). β, γ picked on dev (optimistic).
+
+| Ranking (question + passage) | ATA @1 | ATA @5 | VCA @1 | VCA @5 | VCA @20 |
+| --- | --- | --- | --- | --- | --- |
+| Text embedding | 0.33 | 0.57 | 0.12 | 0.37 | 0.70 |
+| PR prior (ATA β 0.05, VCA β 0.1) | 0.30 | 0.60 | 0.23 | 0.49 | 0.79 |
+| Community vote (ATA γ 0.02, VCA γ 0.2) | 0.33 | 0.53 | 0.23 | 0.49 | 0.67 |
+| PR + community | 0.30 | 0.60 | 0.28 | 0.58 | 0.81 |
+| SGS fused candidates (frozen) | 0.33 | 0.63 | 0.16 | 0.65 | 0.74 |
+| SGS + PR (RRF) | 0.43 | 0.77 | 0.35 | 0.63 | 0.81 |
+| SGS + PR + community (RRF) | 0.40 | 0.77 | 0.33 | 0.65 | 0.81 |
+
+Where the gold answers sit: every dev gold CWE and technique is in the connected graph, though
+66% of all CWEs are isolated; the median gold CWE is at the 95.5th PageRank percentile (techniques:
+70th); the gold node is in one of the question's anchor communities for 83% of ATA and 65% of VCA.
+So PageRank works as a base-rate prior for VCA, learned from the knowledge base's own CVE labels.
+Leak check: no dev VCA passage is a near-duplicate of a corpus_kb CVE (median best cosine 0.48,
+none > 0.9) and none names a KB CVE. Compared with graph embedding A (ATA 0.80, VCA 0.70 @5), GDS
+signals mostly sharpen the top of the list (VCA @1 0.16 → 0.35 with SGS).
