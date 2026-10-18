@@ -5,6 +5,7 @@
  "extracted": 3741,
  "kept": 3512,
  "dropped": {
+  "schema": 0,
   "unknown_id": 6,
   "not_verbatim": 223
  },

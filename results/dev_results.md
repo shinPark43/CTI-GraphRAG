@@ -134,3 +134,31 @@ technique ("initial access" → T1190), and defender actions taken as attacker b
 are partly ATT&CK renames (T1574.001 is now "DLL"; extortion is inside T1657), so name
 disagreement alone is not an error. SGS still uses every edge unweighted; confidence-weighted
 votes are a follow-up.
+
+## Schema-constrained extraction (Pydantic)
+
+`ExtractionReply` / `ExtractedTTP` / `GroundedBehavior` in `src/ctiattr/schemas.py`. Generation is
+constrained to the strict JSON schema derived from `ExtractionReply` (`report_layer.reply_schema()`;
+accepted by both OpenAI strict mode and Ollama). Every record is then validated twice: shape and ID
+format (`ExtractedTTP`), then grounding with the chunk as validation context (`GroundedBehavior`:
+ID in the snapshot → `unknown_id`, phrase verbatim → `not_verbatim`). The committed gpt-5.4-mini layer
+was produced in JSON mode; re-validating its 3,741 cached records with the Pydantic path reproduces
+`report_ttps.jsonl` byte for byte (0 schema, 6 unknown-ID, 223 not-verbatim drops; 6.1% dropped).
+The answer step's constrained selection is likewise re-checked by a Pydantic `Literal` model of the
+listed candidates.
+
+Local model, same prompt and schema (`scripts/compare_extractors.py`, 40 chunks, seed 6338,
+llama3:8b-instruct-fp16 on the local Ollama, temperature 0):
+
+| | Llama-3-8B (local) | gpt-5.4-mini (committed) |
+| --- | --- | --- |
+| Records returned / kept | 209 / 148 | — / 239 |
+| Schema failures | 0 | 0 |
+| Dropped: unknown ID / not verbatim | 3 / 58 (29.2% dropped) | 6.1% dropped (full build) |
+| Latency per chunk | 12.3 s mean, 23.8 s max | — |
+| Agreement on (chunk, technique), exact | P 0.18, R 0.11, F1 0.14 vs gpt | |
+| Agreement, technique family | P 0.29, R 0.19, F1 0.23 vs gpt | |
+
+Constrained decoding removes malformed output entirely, but the 8B model paraphrases instead of
+quoting (58 non-verbatim) and agrees with the larger model on few techniques, so the committed layer
+stays the gpt-5.4-mini build; Llama-3-8B stays the answering model.

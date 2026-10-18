@@ -23,8 +23,10 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter, defaultdict
+from typing import Literal
 
 import numpy as np
+from pydantic import create_model
 
 from ctiattr.candidates import CandidateGenerator, DenseIndex, rrf
 from ctiattr.config import ROOT
@@ -188,7 +190,9 @@ class SGS:
         prompt = LISTWISE.format(taxonomy=TAXONOMY[qa.task], passage=qa.passage,
                                  cards="\n".join(cards[i] for i in order))
         out, call = llm.chat_json(prompt, schema, system=SYSTEM)
-        return out["id"], call
+        # the decoder is constrained to `schema`; Pydantic re-checks the reply against the same candidates
+        reply = create_model("Selection", id=(Literal[tuple(order)], ...)).model_validate(out)
+        return reply.id, call
 
     def explain(self, llm, qa: QA, chosen: str, card: str):
         """Explanation step for the chatbot and RAGAS; never changes the chosen ID."""

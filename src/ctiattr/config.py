@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
@@ -30,8 +31,11 @@ class LLMConfig:
 
     @classmethod
     def from_env(cls, model: str | None = None) -> "LLMConfig":
+        base = os.environ.get("LLM_BASE_URL", "http://localhost:11434/v1").rstrip("/")
+        if not urlparse(base).path:  # bare host:port -> the OpenAI-compatible routes under /v1
+            base += "/v1"
         return cls(
-            base_url=os.environ.get("LLM_BASE_URL", "http://localhost:11434/v1"),
+            base_url=base,
             api_key=os.environ.get("LLM_API_KEY", "ollama"),
             model=model or os.environ.get("LLM_MODEL", "llama3:8b"),
         )

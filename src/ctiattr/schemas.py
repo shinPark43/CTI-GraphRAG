@@ -8,9 +8,11 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
+from pydantic_core import PydanticCustomError
 
 ID_PATTERN = r"^(T\d{4}(\.\d{3})?|CWE-\d+|CAPEC-\d+|CVE-\d{4}-\d{4,})$"
+TECHNIQUE_PATTERN = r"^T\d{4}(\.\d{3})?$"
 
 
 # --- graph ----------------------------------------------------------------
@@ -70,13 +72,51 @@ class ReportChunk(BaseModel):
     text: str
 
 
+class ExtractedTTP(BaseModel):
+    """One record of the extraction reply, exactly as the LLM must produce it."""
+    model_config = ConfigDict(extra="forbid")
+    behavior: str = Field(..., min_length=1, description="The verbatim attacker-behavior phrase from the chunk")
+    technique_id: str = Field(..., pattern=TECHNIQUE_PATTERN, description="ATT&CK ID, e.g. T1486 or T1059.001")
+    technique_name: str = Field(..., description="Official ATT&CK technique name")
+
+    @field_validator("behavior", mode="before")
+    @classmethod
+    def _squash(cls, v):
+        return " ".join(v.split()) if isinstance(v, str) else v
+
+    @field_validator("technique_id", mode="before")
+    @classmethod
+    def _upper(cls, v):
+        return v.strip().upper() if isinstance(v, str) else v
+
+
+class ExtractionReply(BaseModel):
+    """The whole reply for one chunk; its JSON schema constrains generation (report_layer.reply_schema)."""
+    model_config = ConfigDict(extra="forbid")
+    ttps: list[ExtractedTTP]
+
+
 class GroundedBehavior(BaseModel):
-    """One report-layer record: a verbatim behavior phrase grounded to a technique."""
+    """One report-layer record: a verbatim behavior phrase grounded to a technique.
+
+    Validated with context {"chunk_text": str, "technique_ids": set[str]}, it also
+    enforces grounding: the ID exists in the snapshot (error type `unknown_id`) and the
+    phrase occurs verbatim, whitespace-normalized, in the chunk (`not_verbatim`).
+    """
     chunk_id: str
     report_id: str
     behavior: str = Field(..., min_length=1, description="Verbatim substring of the chunk")
-    technique_id: str = Field(..., pattern=r"^T\d{4}(\.\d{3})?$")
+    technique_id: str = Field(..., pattern=TECHNIQUE_PATTERN)
     technique_name: str = ""
+
+    @model_validator(mode="after")
+    def _grounded(self, info: ValidationInfo):
+        ctx = info.context or {}
+        if "technique_ids" in ctx and self.technique_id not in ctx["technique_ids"]:
+            raise PydanticCustomError("unknown_id", "{tid} is not in the snapshot", {"tid": self.technique_id})
+        if "chunk_text" in ctx and self.behavior not in " ".join(ctx["chunk_text"].split()):
+            raise PydanticCustomError("not_verbatim", "behavior is not a verbatim span of the chunk")
+        return self
 
 
 # --- evaluation -------------------------------------------------------------
